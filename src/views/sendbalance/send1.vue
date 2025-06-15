@@ -507,7 +507,7 @@ export default {
 	left: 50%;
 	transform: translateX(-50%);
 	width: calc(100% - 40px); /* 留左右边距 */
-	max-width: 400px; /* 可选最大宽度 */
+	max-width: 1400px; /* 可选最大宽度 */
 	height: 50px;
 	background-color: #4259ff;
 	border: none;
