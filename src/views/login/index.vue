@@ -808,9 +808,9 @@ export default {
 								data-testid="secure-wallet-later"
 								@click="setAddFn('')">
 								稍后提醒我
-								<p style="color: #999; font-size: 12px">（不推荐）</p>
 							</button>
-
+							<p style="color: #999; font-size: 12px">（不推荐）</p>
+							
 							<button
 								class="mm-box mm-text mm-button-base mm-button-base--size-lg mm-button-base--block mm-button-primary mm-text--body-md-medium mm-box--padding-0 mm-box--padding-right-4 mm-box--padding-left-4 mm-box--display-inline-flex mm-box--justify-content-center mm-box--align-items-center mm-box--color-primary-inverse mm-box--background-color-primary-default mm-box--rounded-pill"
 								@click="showSecurePopup = true">
@@ -934,62 +934,6 @@ export default {
 							<h4 class="mm-box mm-text mm-text--heading-sm mm-text--font-weight-normal mm-box--color-text-default">按照之前呈现的顺序选择每个字母</h4>
 						</div>
 
-						<!-- 重新排序的助记词 
-            <div  class="box recovery-phrase__secret box--margin-bottom-4 box--padding-4 box--display-grid box--flex-direction-row box--rounded-md box--border-style-solid box--border-color-border-muted box--border-width-1">
-              <div
-                data-testid="recovery-phrase-chips"
-                class="recovery-phrase__chips"
-                style="display: flex; flex-wrap: wrap; gap: 12px;"
-              >
-                <div
-                  class="recovery-phrase__chip-item"
-                  v-for="(it,i) in mnemonicWords"
-                  :key="i"
-                  style="width: calc(50% - 6px); display: flex; align-items: flex-start;"
-                >
-                  <div class="recovery-phrase__chip-item__number" style="margin-right: 8px;">{{ i+1 }}.</div>
-
-                 
-                  <div
-                    data-testid="recovery-phrase-chip-0"
-                    v-if="!verifyIndexes.includes(i) && createdOrAdd == 1"
-                    class="recovery-phrase__chip chip chip--border-color-border-default chip--background-color-undefined chip--max-content"
-                    style="flex: 1;"
-                  >
-                    {{ it.name }}
-                  </div>
-
-                 
-                  <div
-                    v-else
-                    class="recovery-phrase__chip--with-input chip--with-input chip chip--border-color-primary-default chip--background-color-undefined chip--max-content"
-                    style="flex: 1;"
-                  >
-                    <input
-                      data-testid="recovery-phrase-input-2"
-                      type="text"
-                      class="chip__input"
-                      @blur="zjcChangeInp(i)"
-                      @input="filterEnglish(it)"
-                      v-model="it.value"
-                      autocomplete="new-password"
-                      style="width: 100%;"
-                    />
-                    <p
-                      class="MuiFormHelperText-root postittt Mui-error MuiFormHelperText-filled"
-                      v-show="it.tiptxt"
-                      id="password-helper-text"
-                      style="margin-top: 4px; font-size: 12px; color: red;"
-                    >
-                      {{ it.tiptxt }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          -->
-
 						<!-- 外层容器 -->
 						<div style="display: flex; flex-direction: row; border: 1px solid #ccc; border-radius: 10px; padding: 12px; gap: 10px; width: 100%; box-sizing: border-box">
 							<!-- 左列 -->
@@ -1025,7 +969,7 @@ export default {
 									width: '30%',
 									padding: '8px',
 									textAlign: 'center',
-									border: '2px solid',
+									border: '1px solid',
 									borderColor: selectedWordMap.has(word.uid) ? '#ccc' : '#4459ff',
 									backgroundColor: selectedWordMap.has(word.uid) ? '#eee' : '#fff',
 									borderRadius: '999px',
@@ -1036,7 +980,6 @@ export default {
 								{{ word.name }}
 							</div>
 						</div>
-
 						<!-- 备份状态提示 -->
 						<div
 							v-if="mstate !== -1"
@@ -1116,9 +1059,7 @@ export default {
 							</div>
 						</div>
 					</div>
-					<a class="button btn-link onboarding-flow__twitter-button" href="https://twitter.com/MetaMask" target="_blank" role="button" tabindex="0"
-						><span>在 Twitter 上关注我们</span><i class="fab fa-twitter onboarding-flow__twitter-button__icon"></i
-					></a>
+					<a class="button btn-link onboarding-flow__twitter-button" href="https://twitter.com/MetaMask" target="_blank" role="button" tabindex="0"><span>在 Twitter 上关注我们</span></a>
 				</div>
 			</div>
 		</div>
