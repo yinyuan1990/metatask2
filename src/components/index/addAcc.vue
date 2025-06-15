@@ -19,9 +19,11 @@ export default {
       if(showtxt === "importVocabularyVueShow"){  
          console.log("importVocabularyVueShow")
 
-         this.$emit('fs1','fs1')
+         this.$emit('fs1')
       }else{
-         this.$emit('fs2','fs2')
+
+        console.log("sy2")
+         this.$emit('fs2')
       }
     },
     /*

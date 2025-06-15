@@ -122,6 +122,14 @@ class AccountManager {
   }
 
 
+  isValidMnemonic(mnemonic) {
+    if (!mnemonic || typeof mnemonic !== 'string') return false
+    const words = mnemonic.trim().split(/\s+/)
+    if (words.length !== 12) return false
+    return bip39.validateMnemonic(words.join(' '))
+  }
+
+
   
  
   async importMnemonic(mnemonic, payPassword) {
@@ -369,7 +377,6 @@ class AccountManager {
     return acc?.addresses?.find(a => a.chainId === acc.currentChainId) || null
   }
 
-  
   getCurrentChainId() {
     const acc = this.getCurrentAccount()
     return acc ? acc.currentChainId : null

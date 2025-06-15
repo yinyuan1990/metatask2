@@ -5,7 +5,15 @@ Vue.use(VueI18n)
 
 const messages = {
   zh: {
-
+    import: {
+      title: '导入私钥助记词',
+      hintMnemonic: '我有12个单词组成的助记词',
+      clearAll: '全部清除',
+      paste: '粘贴',
+      continue: '导入',
+       invalidWords: '助记词必须是12个英文单词',
+    clipboardError: '无法读取剪贴板'
+    },
  history: {
     fromThisDevice: "从这台设备上",
     sent: "已发送",
@@ -382,6 +390,15 @@ mainnet: "主网",
   }
   },
   en: {
+    import: {
+      title: 'Import Private Key or Mnemonic',
+      hintMnemonic: 'I have a 12-word mnemonic phrase',
+      clearAll: 'Clear All',
+      paste: 'Paste',
+      continue: 'Import',
+      invalidWords: 'Mnemonic must contain exactly 12 words',
+    clipboardError: 'Failed to read clipboard'
+    },
      history: {
      fromThisDevice: "from this device",
      sent: "Sent",
@@ -757,7 +774,7 @@ title5: "Network",
     addSuccess: "Added successfully",
     addFailExists: "Token already exists, adding failed",
     addError: "Adding failed"
-  }
+   }
     
   }
 }

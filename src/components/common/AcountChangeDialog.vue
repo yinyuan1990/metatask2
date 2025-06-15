@@ -18,7 +18,7 @@
 							<div class="ld22">{{ formatAddress(item.child?.address || '') }}</div>
 						</div>
 					</div>
-          
+
 					<!-- 右侧rd -->
 					<div class="rd">
 						<div class="rd1">
@@ -37,7 +37,10 @@
 			</button>
 		</div>
 		<!-- 添加账户 -->
-		<addAccVue v-if="showCreateAcount" @closeFn="showCreateAcount = false" @createEth="createEth" />
+		<addAccVue v-if="showCreateAcount" @closeFn="showCreateAcount = false" @createEth="createEth" 
+     @fs1="fs1"
+    @fs2="fs2"
+    />
 	</div>
 </template>
 
@@ -66,6 +69,13 @@ export default {
 		this.init();
 	},
 	methods: {
+    fs1(){
+      
+      this.$router.push({ path: '/privateKey' });
+    },
+    fs2(){
+      this.$router.push({ path: '/leadingInA' });
+    },
 		createEth() {
 			console.log('create compelte-->2 ');
 
