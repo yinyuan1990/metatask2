@@ -543,7 +543,7 @@ export default {
 				<i class="iconfont icon-arrow-left-full"></i>
 			</div>
 			<!-- <div class="apphead_cont"></div> -->
-			<img class="apphead_cont" src="@/static/img/metamask1.png" alt=""  />
+			<img class="apphead_cont" src="@/static/img/metamask1.png" alt="" />
 			<div class="apphead_right"></div>
 		</div>
 		<!-- 主体内容  <div class="onboarding-flow"> -->
@@ -740,6 +740,7 @@ export default {
 										</span></label
 									>
 								</div>
+								<!-- <van-button round color="#4459ff" :disabled="isBtn2Ok" class="huibtn" @click.stop="setMimaFn('')" data-testid="create-password-wallet">创建新钱包</van-button> -->
 								<button
 									class="button btn--rounded btn-primary btn--large create-password__form--submit-button"
 									:class="isBtn2Ok ? '' : 'huibtn'"
@@ -767,22 +768,20 @@ export default {
 							<div class="head_lef">新密码</div>
 							<div class="head_rig" @click.stop="ipmFnShow(0)">{{ showMim[0] ? '隐藏' : '显示' }}</div>
 						</div>
-
 						<input :type="showMim[0] ? 'text' : 'password'" v-model="formPsw.pwdzjcsy" class="inpboxit_con_inpb" placeholder="在此输入您的密码" />
-
 						<div class=""></div>
 					</div>
 					<div class="inpboxit_con">
 						<div class="inpboxit_con_head">
 							<div class="head_lef">确认密码</div>
 						</div>
-
 						<input :type="showMim[1] ? 'text' : 'password'" v-model="formPsw.pwdzjcsy1" class="inpboxit_con_inpb" placeholder="确认密码" />
 						<div class="inpboxit_con_txt">至少必须包含8个字符</div>
 					</div>
-					<div @click="onImport" style="height: 50px; line-height: 50px; margin-top: 40px; text-align: center; background: #4459ff; font-size: 14px; color: #fff; border-radius: 25px; opacity: 1">
+					<van-button color="#4459ff" round @click.stop="onImport">导入</van-button>
+					<!-- <div @click="onImport" style="height: 50px; line-height: 50px; margin-top: 40px; text-align: center; background: #4459ff; font-size: 14px; color: #fff; border-radius: 25px; opacity: 1">
 						导入
-					</div>
+					</div> -->
 				</div>
 
 				<div class="onboarding-flow__wrapper" v-else-if="tabKey == 3">
@@ -837,6 +836,7 @@ export default {
             </div> -->
 					</div>
 				</div>
+
 				<div class="onboarding-flow__wrapper" v-else-if="tabKey == 4">
 					<div class="recovery-phrase" data-testid="recovery-phrase">
 						<div class="box box--flex-direction-row">
@@ -854,34 +854,33 @@ export default {
 								请写下这个由12个单词组成的账户私钥助记词，然后将其保存到您信任并且只有您可以访问的地方。
 							</h4>
 						</div>
-
 						<div
 							class="box recovery-phrase__secret box--margin-bottom-4 box--padding-4 box--display-grid box--flex-direction-row box--rounded-md box--border-style-solid box--border-color-border-muted box--border-width-1">
 							<!-- 重新排序的助记词 
-          <div
-            data-testid="recovery-phrase-chips"
-            class="recovery-phrase__chips"
-            :class='{ "recovery-phrase__chips--hidden": !isshowSign }'
-          >
-            <div
-              class="recovery-phrase__chip-item"
-              v-for="(it, i) in reorderedMnemonicWords"
-              :key="i"
-            >
-              <div class="recovery-phrase__chip-item__number">{{ it.index }}.</div>
-              <div class="recovery-phrase__chip chip chip--border-color-border-default">
-                {{ it.name }}
-              </div>
-            </div>
-          </div>
--->
-
-							<div data-testid="recovery-phrase-chips" class="recovery-phrase__chips" :class="{ 'recovery-phrase__chips--hidden': !isshowSign }" style="display: flex; flex-wrap: wrap; gap: 8px">
-								<div class="recovery-phrase__chip-item" v-for="(it, i) in reorderedMnemonicWords" :key="i" style="width: calc(50% - 4px); display: flex; align-items: center">
-									<div class="recovery-phrase__chip-item__number" style="margin-right: 8px">{{ it.index }}.</div>
-									<div class="recovery-phrase__chip chip chip--border-color-border-default" style="flex: 1">
-										{{ it.name }}
+									<div
+										data-testid="recovery-phrase-chips"
+										class="recovery-phrase__chips"
+										:class='{ "recovery-phrase__chips--hidden": !isshowSign }'
+									>
+										<div
+										class="recovery-phrase__chip-item"
+										v-for="(it, i) in reorderedMnemonicWords"
+										:key="i"
+										>
+										<div class="recovery-phrase__chip-item__number">{{ it.index }}.</div>
+										<div class="recovery-phrase__chip chip chip--border-color-border-default">
+											{{ it.name }}
+										</div>
+										</div>
 									</div>
+							-->
+							<div data-testid="recovery-phrase-chips" class="recovery-phrase__chips" :class="{ 'recovery-phrase__chips--hidden': !isshowSign }">
+								<div class="recovery-phrase__chip-item" v-for="(it, i) in reorderedMnemonicWords" :key="i">
+									<!-- <div class="recovery-phrase__chip-item__number" style="margin-right: 8px">{{ it.index }}.</div> -->
+									<!-- <div class="recovery-phrase__chip chip chip--border-color-border-default" style="flex: 1"> -->
+									<span>{{ it.index }}.</span>
+									<span>{{ it.name }}</span>
+									<!-- </div> -->
 								</div>
 							</div>
 
@@ -903,7 +902,6 @@ export default {
 									</span>
 									{{ isshowSign ? '隐藏助记词' : '显示助记词' }}
 								</a>
-
 								<a
 									class="button btn-link recovery-phrase__footer__copy-and-hide__button recovery-phrase__footer__copy-and-hide__button__copy-to-clipboard"
 									role="button"
@@ -915,18 +913,17 @@ export default {
 									复制到剪贴板
 								</a>
 							</div>
-							<button class="button btn--rounded btn-primary recovery-phrase__footer--button" data-testid="recovery-phrase-reveal" @click="goShowSign">
-								{{ isShowOneSign ? '显示私钥助记词' : '下一步' }}
-							</button>
+							<van-button round color="#4459ff" @click.stop="goShowSign">{{ isShowOneSign ? '显示私钥助记词' : '下一步' }}</van-button>
 						</div>
 					</div>
 				</div>
+
 				<div class="onboarding-flow__wrapper" v-else-if="tabKey == 5">
-					<div class="recovery-phrase__confirm" data-testid="confirm-recovery-phrase">
+					<div class="recovery-phrase" data-testid="confirm-recovery-phrase">
 						<div class="box box--margin-bottom-4 box--flex-direction-row">
 							<ul class="progressbar">
 								<li class="active complete">创建密码</li>
-								<li class="active complete l34">安全钱包</li>
+								<li class="active complete">安全钱包</li>
 								<li class="active l34">确认私钥助记词</li>
 							</ul>
 						</div>
@@ -1074,6 +1071,7 @@ export default {
 						</button>
 					</div>
 				</div>
+
 				<div class="onboarding-flow" v-else-if="tabKey == 6">
 					<div class="onboarding-flow__wrapper">
 						<div class="mm-box creation-successful mm-box--display-flex mm-box--flex-direction-column" data-testid="creation-successful">
@@ -1276,7 +1274,7 @@ export default {
 	border: 0;
 	padding: 0px 16px;
 	max-width: 600px;
-	margin:  auto;
+	margin: auto;
 	border-radius: 24px;
 }
 
@@ -1300,7 +1298,23 @@ export default {
 
 .recovery-phrase__footer__copy-and-hide__area {
 	width: 100%;
+
+	a {
+		gap: 3px;
+		display: flex;
+		align-items: center;
+		text-decoration: none;
+	}
 }
+
+.recovery-phrase__footer {
+	.van-button {
+		width: 100%;
+		height: 46px;
+		margin: 24px 0;
+	}
+}
+
 .huibtn {
 	opacity: var(--opacity-disabled);
 }
@@ -1330,7 +1344,6 @@ export default {
 	align-items: center;
 	justify-content: center;
 	margin: 52px auto 12px auto;
-	
 }
 .onboarding-welcome__mascot .hulifangfa {
 	transform: scale(1.6);
@@ -1338,38 +1351,51 @@ export default {
 
 .inputboxsss {
 	padding: 0 16px;
+	margin-top: 12px;
 	box-sizing: border-box;
+
 	.inpboxit_til {
-		text-align: center;
-		font-size: 20px;
+		font-size: 24px;
 		font-weight: bold;
+		text-align: center;
 		margin-bottom: 20px;
 	}
 	.inpboxit_con {
 		margin: 15px auto;
+
 		&_head {
 			display: flex;
+			color: #333;
+			font-size: 14px;
 			align-items: center;
 			justify-content: space-between;
-			font-size: 14px;
-			color: #333;
+
+			.head_lef {
+				font-size: 15px;
+			}
 		}
 		&_inpb {
-			border: 1px #aab5c0 solid;
-			height: 40px;
-			line-height: 40px;
+			width: 100%;
+			height: 50px;
+			display: block;
 			padding: 0 16px;
 			font-size: 14px;
-			display: block;
-			width: 100%;
+			line-height: 40px;
 			margin: 10px auto;
 			border-radius: 6px;
+			border: 1px #aab5c0 solid;
 		}
 		&_txt {
-			font-size: 12px;
 			color: #555;
+			font-size: 12px;
 		}
 	}
+
+	.van-button {
+		width: 100%;
+		margin-top: 41px;
+	}
+
 	.inpboxit_btnbx {
 		height: 50px;
 		line-height: 50px;
@@ -1396,7 +1422,6 @@ export default {
 	z-index: 2147483647;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid red;
 }
 
 .secure-container {
