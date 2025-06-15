@@ -227,7 +227,7 @@ export default {
     }
   },
 
-    onImport() {
+    async onImport() {
     // 处理私钥助记词 + 密码验证逻辑
      console.log('执行导入逻辑', this.formPsw)
     // 这里可以调用你之前写的 accountManager.importMnemonic(this.formPsw.zjctxt)
@@ -262,7 +262,7 @@ export default {
           const words = cleaned.split(/\s+/);
           if ((words.length === 12 || words.length === 24) && bip39.validateMnemonic(this.formPsw.zjctxt)) {
             // 是助记词
-            account = accountManager.importMnemonic(this.formPsw.zjctxt, pwd1);
+            account = await accountManager.importMnemonic(this.formPsw.zjctxt, pwd1);
           } else {
             // 清洗私钥（兼容带不带 0x）
             if (/^0x[0-9a-fA-F]{64}$/.test(cleaned)) {
@@ -275,7 +275,7 @@ export default {
             }
 
             // 是合法私钥
-            account = accountManager.importPrivateKey(cleaned, pwd1);
+            account = await  accountManager.importPrivateKey(cleaned, pwd1);
           }
 
           console.log('导入的账户信息:', account);
@@ -314,9 +314,9 @@ export default {
       for(let i=0;i<this.createWallet.addresses.length;i++){
         let it = this.createWallet.addresses[i];
         console.log( it,'---createWallet-addresses' )
-        assetManager.addDefaultMainAsset( this.createWallet.walletId,it.chainId,it.address );
+        //assetManager.addDefaultMainAsset( this.createWallet.walletId,it.chainId,it.address );
         let meta = chainDefaultTokenMap[ it.chainId ]
-        assetManager.addContractTokenAsset( this.createWallet.walletId,it.chainId,it.address,meta.contractAddress );
+        //assetManager.addContractTokenAsset( this.createWallet.walletId,it.chainId,it.address,meta.contractAddress );
       }
       let userAddInfo = {
         ...this.createWallet,
@@ -333,7 +333,7 @@ export default {
       },500)
       
     },
-    setAddFn(type) { // 下一步
+    async setAddFn(type) { // 下一步
 
       console.log( type,'setAddFn',this.tabKey ) ;
       if (!this.oneCheck) return;
@@ -344,16 +344,14 @@ export default {
       }
       if( this.tabKey == 0 && type == 1 ){
         // this.createWallet = createWallet()
-        this.createWallet = accountManager.createFromMnemonic()
-        console.log(  this.createWallet  )
+        
+        //this.createWallet = await accountManager.createFromMnemonic()
+        //console.log("createmm---> 2")
+        //console.log(  this.createWallet  )
         // this.createWallet.mnemonic
-        this.mnemonicWords = this.createWallet.mnemonic.split(' ').map(it=>{
-          return {
-            value:'',
-            name:it,
-            tiptxt:''
-          }
-        })
+        
+
+
       }
       if( this.tabKey ==  3){
         if(this.createdOrAdd == 2){ // 导入助记词
@@ -456,7 +454,7 @@ export default {
         }
       }
     },
-    querenyanz() { // 确认私钥助记词
+    async querenyanz() { // 确认私钥助记词
       const arr = this.createdOrAdd === 1
         ? this.verifyIndexes  // ⬅️ 使用动态随机索引
         : Array.from({ length: 12 }, (_, i) => i);
@@ -489,7 +487,7 @@ export default {
 
       try {
         if (this.createdOrAdd === 2) {
-          this.createWallet = accountManager.importMnemonic(zijcStr);
+          this.createWallet = await accountManager.importMnemonic(zijcStr);
         }
       } catch (error) {
         errTxt = error;
@@ -504,7 +502,7 @@ export default {
 
       this.setAddFn('');
     },
-    setMimaFn(){ // 设置事件
+    async setMimaFn(){ // 设置事件
       // this.blurFn('');
       //console.log( this.formPsw,'setMimaFn' )
       //console.log( this.isBtn2Ok,'setMimaFn' )
@@ -529,7 +527,7 @@ export default {
       this.oneCheck = true;
 
       
-      this.createWallet = accountManager.createFromMnemonic(this.formPsw.psw1)
+      this.createWallet = await accountManager.createFromMnemonic(this.formPsw.psw1)
         console.log(  this.createWallet  )
         // this.createWallet.mnemonic
           this.mnemonicWords = this.createWallet.mnemonic.split(' ').map(it=>{

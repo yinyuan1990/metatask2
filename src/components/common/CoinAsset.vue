@@ -31,6 +31,7 @@
             v-for="(item, index) in coinList"
             :key="item.contractAddress + item.chainId"
             class="asset-item"
+            @click="showDetailsDb(item)"
           >
             <div class="ld">
               <div class="ld-1">
@@ -95,7 +96,8 @@
   <script>
   import BScroll from 'better-scroll'
   import ChainIcon2 from '@/components/common/ChainIcon2.vue'
-  import { accountManager } from "@/bbjs/AccountManager";
+  import { accountManager,save } from "@/bbjs/AccountManager";
+
   import { assetManager } from "@/bbjs/AssetManager";
   import { getTokenLogo } from '@/bbjs/iconService.js'
   import { fetchTokenPrice,fetchTokenPrice2,  fetchTokenBalance,fetchTokenBalance2 } from '@/bbjs/priceService'
@@ -180,6 +182,12 @@
       console.log('账号已更改:');
       this.initData(); // 重新加载数据
     },
+    showDetailsDb(it){ //显示代币详情
+            save('dbitem',it)
+            this.$router.push({
+                path:"/dbdetails"
+            })
+        },
       onAccountChanged() {
         this.refreshnetKey++;
       console.log('账号已更改:');
@@ -297,78 +305,7 @@
       async refreshPricesAndBalances() {
 
         this.initData()
-        /*
-        if (this.isLoading) return;
-        this.isLoading = true;
-        const currentRequestId = ++this.refreshRequestId; // 每次调用加1，生成唯一ID
-        const currentAccount = accountManager.getCurrentAccount();
-        const playId=accountManager.getCurrentChainId();
-
-        if (!currentAccount) {
-          this.isLoading = false;
-          return;
-        }
-  
-        // 刷新余额，UI立即刷新
-        for (let i = 0; i < this.coinList.length; i++) {
-          const it = this.coinList[i];
-          try {
-            const meta = chainDefaultTokenMap[it.chainId];
-            const rpcUrl = meta?.rpcUrl;
-            if (rpcUrl && it.address) {
-              const result = await fetchTokenBalance2({
-                rpcUrl,
-                address: currentAccount.address,
-                chainid:it.chainId,
-                contractAddress: it.contractAddress || '',
-                decimals: it.decimals || 18
-              });
-
-              console.log("fetchTokenBalance2 请求chaind---> ",it.chainId,"当前chainid----> ",accountManager.getCurrentChainId())
-              if (result.chainid !== accountManager.getCurrentChainId()) {
-                // 如果当前请求不是最新的，直接返回，忽略本次结果
-                this.isLoading = false;
-                return;
-              }
-              this.$set(this.coinList, i, { ...it, balance: parseFloat(result.formatted) });
-            }
-          } catch (e) {
-            console.warn(`[余额刷新失败] ${it.symbol || it.name}`, e);
-          }
-        }
-  
-        // 异步刷新价格，UI再刷新
-        try {
-          const priceResults = await Promise.all(this.coinList.map(async (it) => {
-            try {
-              const meta = chainDefaultTokenMap[it.chainId];
-              const priceData = await fetchTokenPrice2(meta.coinGeckoPlatformId,it.chainId, it.contractAddress, meta.coinGeckoPlatformId);
-              return {
-                ...it,
-                price: priceData.price,
-                change24h: priceData.change24h,
-                iconUrl: priceData.icon || it.iconUrl,
-              };
-            } catch (e) {
-              console.warn(`[价格刷新失败] ${it.symbol || it.name}`, e);
-              return it;
-            }
-          }));
-  
-
-          console.log("fetchTokenPrice2 请求chaind---> ",it.chainId,"当前chainid----> ",accountManager.getCurrentChainId())
-          if (priceData.chainid !== accountManager.getCurrentChainId()) {
-                // 如果当前请求不是最新的，直接返回，忽略本次结果
-                this.isLoading = false;
-                return;
-              }
-          this.coinList = priceResults;
-          this.totalM = priceResults.reduce((sum, item) => sum + item.price * item.balance, 0);
-        } catch (e) {
-          console.error("价格刷新失败", e);
-        }
-  
-        this.isLoading = false;*/
+       
       },
   
       formatSmartNumber(value, options = {}) {
