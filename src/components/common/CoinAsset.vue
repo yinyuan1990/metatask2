@@ -1,6 +1,6 @@
 <template>
 	<div class="asset-manager">
-		<div class="container">
+		<div class="asset-head">
 			<!-- 左边 -->
 			<div class="l1">
 				<div class="choose" @click="show = true">
@@ -20,41 +20,39 @@
 		</div>
 		<!-- BetterScroll 容器 -->
 		<div class="scroll-wrapper" ref="scrollWrapper">
-			<div>
-				<!-- 资产列表 -->
-				<div v-for="(item, index) in coinList" :key="item.contractAddress + item.chainId" class="asset-item" @click="showDetailsDb(item)">
-					<div class="ld">
-						<div class="ld-1">
-							<img :src="item.iconUrl" alt="token icon" class="token-icon" @error="onTokenIconError($event)" />
-							<ChainIcon2 :chainId="item.chainId" :isTestnet="false" class="chain-icon" />
-						</div>
-						<div class="ld-2">
-							<div class="token-name">
-								<div class="asset-row">
-									{{ item.name }}
-									<template v-if="item.chainId == 1 && item.isMainCoin">
-										<div class="stake-action" @click="handleStakeClick(item)">
-											{{ $t('setting.common.stake') }}
-											<div class="icon-stake"></div>
-										</div>
-									</template>
-								</div>
-							</div>
-							<div class="token-change" :class="item.change24h >= 0 ? 'up' : 'down'">
-								{{ formatChange(item.change24h) }}
+			<!-- 资产列表 -->
+			<div class="asset-item" v-for="(item, index) in coinList" :key="item.contractAddress + item.chainId" @click="showDetailsDb(item)">
+				<div class="ld">
+					<div class="ld-1">
+						<img :src="item.iconUrl" class="token-icon" @error="onTokenIconError($event)" />
+						<ChainIcon2 :chainId="item.chainId" :isTestnet="false" class="chain-icon" />
+					</div>
+					<div class="ld-2">
+						<div class="token-name">
+							<div class="asset-row">
+								{{ item.name }}
+								<template v-if="item.chainId == 1 && item.isMainCoin">
+									<div class="stake-action" @click="handleStakeClick(item)">
+										{{ $t('setting.common.stake') }}
+										<div class="icon-stake"></div>
+									</div>
+								</template>
 							</div>
 						</div>
-					</div>
-					<div class="rd">
-						<div class="balance">{{ formatSmartNumber(item.balance, { decimals: 4 }) }} {{ item.symbol }}</div>
-						<div class="value">${{ formatSmartNumber(item.price * item.balance, { decimals: 4 }) }}</div>
+						<div class="token-change" :class="item.change24h >= 0 ? 'up' : 'down'">
+							{{ formatChange(item.change24h) }}
+						</div>
 					</div>
 				</div>
-				<!-- 资产导入放入滚动内容尾部 -->
-				<div class="asset-import" @click="drdbclick" style="margin-top: 20px">
-					<span class="gray-text">{{ $t('setting.noTokensFound') }}</span>
-					<span class="blue-text">{{ $t('setting.importToken') }}</span>
+				<div class="rd">
+					<div class="balance">{{ formatSmartNumber(item.balance, { decimals: 4 }) }} {{ item.symbol }}</div>
+					<div class="value">${{ formatSmartNumber(item.price * item.balance, { decimals: 4 }) }}</div>
 				</div>
+			</div>
+			<!-- 资产导入放入滚动内容尾部 -->
+			<div class="asset-import" @click="drdbclick">
+				<span class="gray-text">{{ $t('setting.noTokensFound') }}</span>
+				<span class="blue-text">{{ $t('setting.importToken') }}</span>
 			</div>
 		</div>
 	</div>
@@ -62,14 +60,14 @@
 
 <script>
 import BScroll from 'better-scroll';
-import ChainIcon2 from '@/components/common/ChainIcon2.vue';
-import { accountManager, save } from '@/bbjs/AccountManager';
+import { EventBus } from '@/bbjs/bus.js'; // 你的事件总线
 import { assetManager } from '@/bbjs/AssetManager';
 import { getTokenLogo } from '@/bbjs/iconService.js';
-import { fetchTokenPrice, fetchTokenPrice2, fetchTokenBalance, fetchTokenBalance2 } from '@/bbjs/priceService';
-import { chainDefaultTokenMap } from '@/bbjs/chain-default-assets';
 import { networkManager } from '@/bbjs/networkManager.js';
-import { EventBus } from '@/bbjs/bus.js'; // 你的事件总线
+import ChainIcon2 from '@/components/common/ChainIcon2.vue';
+import { accountManager, save } from '@/bbjs/AccountManager';
+import { chainDefaultTokenMap } from '@/bbjs/chain-default-assets';
+import { fetchTokenPrice, fetchTokenPrice2, fetchTokenBalance, fetchTokenBalance2 } from '@/bbjs/priceService';
 export default {
 	components: { ChainIcon2 },
 	destroyed() {
@@ -307,78 +305,114 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .asset-manager {
 	width: 100%;
-	padding: 0 20px;
-	box-sizing: border-box;
-	height: 400px; /* fixed height needed for better-scroll */
-	position: relative;
-}
-
-.scroll-wrapper {
-	margin-top: 20dp;
 	height: 100%;
-	overflow: hidden;
-}
-
-.asset-list {
-	/* no native scroll, controlled by better-scroll */
-}
-
-.asset-item {
-	padding: 0;
-	height: 60px;
 	display: flex;
-	align-items: center;
-	border-radius: 10px;
-	margin-bottom: 10px;
-	box-sizing: border-box;
-	justify-content: space-between;
-}
-
-.ld {
-	display: flex;
-	align-items: center;
-	flex: 1;
-}
-
-.ld-1 {
+	padding: 0 20px;
 	position: relative;
-	height: 30px;
-	width: 30px;
+	flex-direction: column;
+	box-sizing: border-box;
+
+	.asset-head {
+		width: 100%;
+		display: flex;
+		position: relative;
+		align-items: center;
+		box-sizing: border-box;
+		justify-content: space-between;
+
+		.choose {
+			color: #000;
+			font-size: 13px;
+			padding: 8px 16px;
+			border-radius: 24px;
+			border: 1px solid #bbbbbb;
+		}
+
+		.l2 {
+			gap: 6px;
+			display: flex;
+			align-items: center;
+
+			.l21,
+			.l22 {
+				display: flex;
+				padding: 8px 16px;
+				align-items: center;
+				border-radius: 24px;
+				justify-content: center;
+				border: 1px solid #bbbbbb;
+
+				img {
+					width: 15px;
+					height: 15px;
+					user-select: none;
+				}
+			}
+		}
+	}
+
+	.scroll-wrapper {
+		flex: 1;
+		margin-top: 20px;
+		overflow: hidden;
+
+		.asset-item {
+			padding: 0;
+			height: 60px;
+			display: flex;
+			align-items: center;
+			border-radius: 10px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+			justify-content: space-between;
+
+			.ld {
+				flex: 1;
+				display: flex;
+				align-items: flex-start;
+
+				.ld-1 {
+					width: 41px;
+					height: 41px;
+					position: relative;
+
+					.chain-icon {
+						right: 6px;
+						bottom: 3px;
+						width: 15px;
+						height: 15px;
+						position: absolute;
+					}
+				}
+			}
+		}
+	}
 }
 
 .token-icon {
-	height: 30px;
 	width: 30px;
+	height: 30px;
 	border-radius: 50%;
-}
-
-.chain-icon {
-	position: absolute;
-	right: -6px;
-	bottom: -6px;
-	width: 15px;
-	height: 15px;
 }
 
 .ld-2 {
 	display: flex;
+	margin-left: 12px;
 	flex-direction: column;
-	margin-left: 20px;
 	justify-content: center;
 }
 
 .token-name {
+	color: #000;
 	font-size: 16px;
 	font-weight: 600;
-	color: #000;
 }
 
 .token-change {
 	font-size: 15px;
-	margin-top: 10px;
 }
 
 .token-change.up {
@@ -391,119 +425,47 @@ export default {
 
 .rd {
 	display: flex;
+	align-items: flex-end;
 	flex-direction: column;
 	justify-content: center;
-	align-items: flex-end;
 }
 
 .balance {
+	color: #000;
 	font-size: 16px;
 	font-weight: 600;
-	color: #000;
 }
 
 .value {
-	font-size: 15px;
 	color: #999;
-	margin-top: 10px;
+	font-size: 15px;
 }
 
 .asset-import {
-	margin-top: 20px;
-	text-align: center;
 	font-size: 16px;
+	margin-top: 20px;
 	color: #9ca0ae;
-	cursor: pointer;
 	user-select: none;
+	text-align: center;
 }
 
 .asset-import .blue-text {
+	font-size: 14px;
 	color: #4259ff;
 	margin-left: 10px;
-	font-size: 16px;
 }
 
-.container {
-	width: 100%;
-	display: flex;
-	z-index: 99999;
-	position: relative;
-	align-items: center;
-	box-sizing: border-box;
-	justify-content: space-between; /* 整体居中 */
-	margin-top: 30px;
-	margin-bottom: 40px;
-	border: 1px solid red;
-}
-
-/* 左边靠左 */
-.l1 {
-	left: 0px;
-	position: absolute;
-	/* 也可以用flex-grow不让占用宽度过大 */
-	/* z-index: 99999; */
-	/* position: relative; */
-}
-
-/* 右边靠右 */
-.l2 {
-	position: absolute;
-	right: 0px;
-	display: flex;
-	/* z-index: 99999; */
-	/* align-items: center; */
-	/* position: relative; */
-}
-
-/* 右边两个按钮 */
-.l21,
-.l22 {
-	display: inline-flex; /* inline改为inline-flex，方便图标和文字垂直居中 */
-	align-items: center;
-	border: 1px solid #eee;
-	padding: 8px 16px;
-	border-radius: 20px;
-	font-size: 14px;
-	color: #000;
-	cursor: pointer;
-	user-select: none;
-}
-
-.l21 {
-	margin-right: 5px;
-}
-
-.l22 {
-	margin-left: 5px;
-}
-
-.l21 img,
-.l22 img {
-	width: 15px;
-	height: 15px;
-
-	user-select: none;
-}
-.choose {
-	display: inline;
-	border: 1px solid #eee;
-	padding: 8px 16px;
-	border-radius: 20px;
-	font-size: 14px;
-	color: #000;
-	margin-left: 0px;
-	cursor: pointer;
-}
 .svgicon {
 	width: 20px;
 	height: 20px;
+	color: #4259ff;
 	fill: currentColor;
-	color: #4259ff; /* 设置图标颜色 */
 }
+
 .icon-stake {
-	display: inline-block;
 	width: 16px;
 	height: 16px;
+	display: inline-block;
 	background-color: #4259ff;
 	mask: url('@/static/icon/stake.svg') no-repeat center;
 	-webkit-mask: url('@/static/icon/stake.svg') no-repeat center;
@@ -518,11 +480,9 @@ export default {
 
 	.stake-action {
 		display: flex;
-		align-items: center;
-		cursor: pointer;
-		margin-left: 8px;
 		color: #4259ff;
 		font-weight: 500;
+		align-items: center;
 
 		.icon-stake {
 			width: 16px;

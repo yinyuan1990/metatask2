@@ -16,7 +16,7 @@ export default {
 			showSecurePopup: false,
 			oneCheck: true, // 登录 协议同意
 			tabKey: 0, // 当前状态
-			//tabKey: 3,// 当前状态
+			// tabKey: 5, // 当前状态
 			createdOrAdd: 1, // 导入还是创建 1创建 2导入
 			checkSvg: require('@/static/icon/check.svg'),
 			checkSvgBold: require('@/static/icon/check-bold.svg'),
@@ -800,8 +800,17 @@ export default {
 								>如果您被应用锁定或换新设备，这是找回钱包的唯一途径</span
 							>。
 						</p>
-						<div
-							class="mm-box secure-your-wallet__actions mm-box--margin-bottom-8 mm-box--display-flex mm-box--gap-4 mm-box--flex-direction-column mm-box--sm:flex-direction-row mm-box--justify-content-space-between mm-box--width-full">
+						<div class="tips">
+							<div class="t1">
+								<span @click.stop="setAddFn('')">稍后提醒我</span>
+								<span>(不建议)</span>
+							</div>
+							<div class="t2">
+								<van-button color="#4459ff" round @click.stop="showSecurePopup = true">开始</van-button>
+								<span>强烈建议</span>
+							</div>
+						</div>
+						<!-- <div class="tab-key-bottom">
 							<button
 								style="display: block; border: 0"
 								class="mm-box mm-text mm-button-base mm-button-base--size-lg mm-button-base--block mm-button-secondary mm-text--body-md-medium mm-box--padding-0 mm-box--padding-right-4 mm-box--padding-left-4 mm-box--display-inline-flex mm-box--justify-content-center mm-box--align-items-center mm-box--color-primary-default mm-box--background-color-transparent mm-box--rounded-pill mm-box--border-color-primary-default box--border-style-solid box--border-width-1"
@@ -810,14 +819,13 @@ export default {
 								稍后提醒我
 							</button>
 							<p style="color: #999; font-size: 12px">（不推荐）</p>
-							
 							<button
 								class="mm-box mm-text mm-button-base mm-button-base--size-lg mm-button-base--block mm-button-primary mm-text--body-md-medium mm-box--padding-0 mm-box--padding-right-4 mm-box--padding-left-4 mm-box--display-inline-flex mm-box--justify-content-center mm-box--align-items-center mm-box--color-primary-inverse mm-box--background-color-primary-default mm-box--rounded-pill"
 								@click="showSecurePopup = true">
 								开始
 							</button>
 							<p style="color: #999; font-size: 12px; text-align: center">强烈建议</p>
-						</div>
+						</div> -->
 						<!-- <div class="mm-box secure-your-wallet__desc">
               <h3 class="mm-box mm-text mm-text--heading-sm mm-box--color-text-default">什么是账户私钥助记词？</h3>
               <p class="mm-box mm-text mm-text--body-md mm-box--margin-bottom-4 mm-box--color-text-default">
@@ -927,34 +935,29 @@ export default {
 								<li class="active l34">确认私钥助记词</li>
 							</ul>
 						</div>
-						<div class="box box--margin-bottom-4 box--flex-direction-row box--justify-content-center box--text-align-center box--display-flex">
-							<h2 class="mm-box mm-text mm-text--heading-lg mm-text--font-weight-bold mm-box--color-text-default">确认私钥助记词</h2>
+						<div class="box">
+							<h2>确认私钥助记词</h2>
+							<h4>按照之前呈现的顺序选择每个字母</h4>
 						</div>
-						<div class="box box--margin-bottom-4 box--flex-direction-row box--justify-content-center box--text-align-center box--display-flex">
-							<h4 class="mm-box mm-text mm-text--heading-sm mm-text--font-weight-normal mm-box--color-text-default">按照之前呈现的顺序选择每个字母</h4>
-						</div>
-
 						<!-- 外层容器 -->
-						<div style="display: flex; flex-direction: row; border: 1px solid #ccc; border-radius: 10px; padding: 12px; gap: 10px; width: 100%; box-sizing: border-box">
-							<!-- 左列 -->
-							<div style="width: calc(50% - 5px); display: flex; flex-direction: column; gap: 0px">
-								<div v-for="i in 6" :key="'l' + i" style="display: flex; align-items: center; height: 36px; min-height: 36px; max-height: 36px; margin-bottom: 8px">
-									<div style="margin-right: 6px">{{ i }}.</div>
-									<div v-if="formPsw.selectedWords[i - 1]" style="flex: 1; padding: 6px 10px; border: 1px solid #4459ff; border-radius: 999px; text-align: center">
-										{{ formPsw.selectedWords[i - 1]?.name || '' }}
-									</div>
-									<div v-else style="flex: 1; padding: 6px 10px; border: 1px dashed #4459ff; border-radius: 999px">&nbsp;</div>
+						<div class="word-grid">
+							<!-- 左列 (1-6) -->
+							<div class="word-column">
+								<div v-for="i in 6" :key="'l' + i" class="word-item">
+									<span class="word-index">{{ i }}.</span>
+									<span class="word-content">
+										{{ formPsw.selectedWords[i - 1]?.name || '&nbsp;' }}
+									</span>
 								</div>
 							</div>
 
-							<!-- 右列 -->
-							<div style="width: calc(50% - 5px); display: flex; flex-direction: column; gap: 0px">
-								<div v-for="i in 6" :key="'r' + i" style="display: flex; align-items: center; height: 36px; min-height: 36px; max-height: 36px; margin-bottom: 8px">
-									<div style="margin-right: 6px">{{ i + 6 }}.</div>
-									<div v-if="formPsw.selectedWords[i + 5]" style="flex: 1; padding: 6px 10px; border: 1px solid #4459ff; border-radius: 999px; text-align: center">
-										{{ formPsw.selectedWords[i + 5]?.name || '' }}
-									</div>
-									<div v-else style="flex: 1; padding: 6px 10px; border: 1px dashed #4459ff; border-radius: 999px">&nbsp;</div>
+							<!-- 右列 (7-12) -->
+							<div class="word-column">
+								<div v-for="i in 6" :key="'r' + i" class="word-item">
+									<span class="word-index">{{ i + 6 }}.</span>
+									<span class="word-content">
+										{{ formPsw.selectedWords[i + 5]?.name || '&nbsp;' }}
+									</span>
 								</div>
 							</div>
 						</div>
@@ -1213,10 +1216,99 @@ export default {
 
 .onboarding-flow__wrapper {
 	border: 0;
-	padding: 0px 16px;
-	max-width: 600px;
 	margin: auto;
+	max-width: 600px;
+	padding: 0px 16px;
 	border-radius: 24px;
+
+	.tips {
+		width: 100%;
+		.t1,
+		.t2 {
+			gap: 12px;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			justify-content: center;
+
+			span:nth-child(1) {
+				font-size: 15px;
+				font-weight: 500;
+				color: #4459ff;
+			}
+			span:nth-child(2) {
+				font-size: 12px;
+				color: #686e7d;
+			}
+		}
+
+		.t2 {
+			margin-top: 24px;
+
+			.van-button {
+				width: 100%;
+				height: 40px;
+
+				.van-button__text {
+					color: #fff;
+				}
+			}
+		}
+	}
+
+	.box {
+		h2 {
+			font-size: 24px;
+			font-weight: 600;
+			text-align: center;
+		}
+		h4 {
+			margin: 12px 0;
+			font-size: 16px;
+			text-align: center;
+		}
+	}
+
+	.word-grid {
+		gap: 16px;
+		width: 100%;
+		display: grid;
+		padding: 15px 12px;
+		border-radius: 4px;
+		border: 1px solid #bbbbbb;
+		grid-template-columns: 1fr 1fr;
+
+		.word-column {
+			gap: 16px;
+			display: grid;
+
+			.word-item {
+				gap: 4px;
+				display: flex;
+				align-items: center;
+
+				.word-index {
+					width: 24px;
+					color: #666;
+					text-align: right;
+				}
+
+				.word-content {
+					width: 80%;
+					display: flex;
+					font-size: 14px;
+					overflow: hidden;
+					padding: 6px 8px;
+					border-radius: 24px;
+					align-items: center;
+					white-space: nowrap;
+					justify-content: center;
+					text-overflow: ellipsis;
+					border: 1px solid #4459ff;
+				}
+			}
+		}
+	}
 }
 
 .carousel-root {

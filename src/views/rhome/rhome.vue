@@ -1,6 +1,103 @@
+<template>
+	<div class="page-container">
+		<div class="fixed-top-content">
+			<div class="title-bar">
+				<div class="left-section">
+					<div class="network-select" @click="qhwlclick">
+						<ChainIcon :chainId="currentChainId" :isTestnet="false" class="chain-icon" />
+						<img src="@/static/icon/arrow-down.svg" alt="下拉箭头" class="arrow-icon" />
+					</div>
+				</div>
+				<div class="center-section" @click="showAddclick">
+					<div class="head_con">
+						<div class="content-wrapper">
+							<button class="account-button" data-testid="account-menu-icon">
+								<span class="account-info">
+									<div class="avatar-wrapper">
+										<headbox height="20" width="20"></headbox>
+									</div>
+									<span class="account-label"> Account {{ userinfos.idx + 1 }} </span>
+								</span>
+								<img src="@/static/icon/arrow-down.svg" alt="" class="arrow-icon" />
+							</button>
+							<span class="copy-text">{{ currentAddress }}</span>
+						</div>
+					</div>
+				</div>
+				<div class="right-section">
+					<div class="mhead_right_icons">
+						<img src="@/static/icon/copy.svg" alt="copy" class="icon" @click="copyText(currentAddress || '')" />
+						<img src="@/static/icon/notification.svg" alt="notification" class="icon" @click="tongzhiclick" />
+					</div>
+				</div>
+			</div>
+			<div class="asset-container">
+				<div class="ld">
+					<div class="ld-sd">
+						<div class="usd-text">US$</div>
+						<div class="total-balance">0</div>
+						<img src="@/static/icon/eye.svg" alt="eye-icon" class="eye-icon" @click="toggleVisibility" />
+					</div>
+					<div class="ld-xd">
+						<div class="plus-zero">+$0</div>
+						<div class="increase">+0%</div>
+					</div>
+				</div>
+				<van-button color="#4459ff" round plain class="rd" @click="tzzhclick">
+					<span class="rd-1">{{ $t('setting.portfolio') }}</span>
+					<img src="@/static/icon/export.svg" alt="export-icon" class="rd-2" />
+				</van-button>
+			</div>
+			<banner
+				:bannerData="[
+					{
+						icon: require('@/static/icon/b1.png'),
+						des1: 'MetaMask Card', // 不需要国际化，直接写字符串
+						des2: { i18nKey: 'setting.banner.availableInRegions' }, // 需要国际化的文本
+					},
+					{
+						icon: require('@/static/icon/b2.png'),
+						des1: { i18nKey: 'setting.banner.topUpWallet' }, // 需要国际化
+						des2: { i18nKey: 'setting.banner.addOrTransferToken' }, // 需要国际化
+					},
+					{
+						icon: require('@/static/icon/b3.png'),
+						des1: [{ i18nKey: 'setting.banner.through' }, ' MetaMask ', { i18nKey: 'setting.banner.withdraw' }],
+						des2: { i18nKey: 'setting.banner.sellCrypto' }, // 卖出加密货币换取现金
+					},
+					{
+						icon: require('@/static/icon/b4.png'),
+						des1: { i18nKey: 'setting.banner.totalBalance' }, // 您的余额为汇总总额
+						des2: { i18nKey: 'setting.banner.balanceSetting' }, // 在设置中控制您的余额视图
+					},
+					{
+						icon: require('@/static/icon/b5.png'),
+						des1: 'Add multiple Secret Recovery Phrases',
+						des2: 'Import and use multiple wallets in MetaMask',
+					},
+				]" />
+			<div class="tab-nav">
+				<div v-for="(tabKey, index) in tabKeys" :key="tabKey" :class="['tab-item', { active: currentIndex === index }]" @click="selectTab(index)">
+					{{ $t(tabKey) }}
+				</div>
+			</div>
+		</div>
+		<div class="scroll-container">
+			<CoinAsset v-show="currentIndex === 0" @importTokens="handleImportTokens" />
+			<!-- <NftComponent v-show="currentIndex === 1" /> -->
+		</div>
+		<ChainChangeDialog v-if="showNetworkModal" @close="showNetworkModal = false" @select-network="handleSelectNetwork" @add-zdynetwork="handleAddZdyNetwork" />
+		<AddNetworkZdyPopup v-if="showAddPopup" @close="closePopup" />
+		<!-- 切换账号弹框 -->
+		<AcountChangeDialog v-if="selectUVueShow" @closeFn="selectUVueShow = false" @close="selectUVueShow = false" @accountRefresh="accountRefresh" />
+		<SendDialog v-if="SendDialogModal" :asset="selectedAsset" @cancelclick="SendDialogModal = false" @nextclick="onNextSend" @selectSendAccount="onSelectSendAccount" />
+		<tabVue :active="0" />
+	</div>
+</template>
 <script>
-import TitleBar from '@/components/common/TitleBar.vue';
+import { EventBus } from '@/bbjs/bus.js';
 import tabVue from '@/components/tabbox/tab.vue';
+import TitleBar from '@/components/common/TitleBar.vue';
 import { accountManager } from '@/bbjs/AccountManager.js';
 
 import { formatAddress } from '@/bbjs/utils.js';
@@ -11,12 +108,11 @@ import CoinAsset from '@/components/common/CoinAsset.vue';
 
 import ChainChangeDialog from '@/components/common/ChainChangeDialog.vue';
 import LanguageSelectDialog from '@/components/common/LanguageSelectDialog.vue';
-import { EventBus } from '@/bbjs/bus.js';
 
+import { assetManager } from '@/bbjs/AssetManager.js'; // 确保引入了 assetManager
+import SendDialog from '@/components/common/SendDialog.vue';
 import AddNetworkZdyPopup from '@/components/common/AddNetworkZdyPopup.vue';
 import AcountChangeDialog from '@/components/common/AcountChangeDialog.vue';
-import SendDialog from '@/components/common/SendDialog.vue';
-import { assetManager } from '@/bbjs/AssetManager.js'; // 确保引入了 assetManager
 
 export default {
 	beforeDestroy() {
@@ -112,7 +208,6 @@ export default {
 		copyText,
 		qhwlclick() {
 			this.showNetworkModal = true;
-			console.log('qhwlclick', this.showNetworkModal);
 		},
 		manualRefresh() {},
 		tongzhiclick() {
@@ -194,151 +289,105 @@ export default {
 	},
 };
 </script>
-<template>
-	<div class="page-container">
-		<div class="fixed-top-content">
-			<div class="title-bar">
-				<div class="left-section">
-					<div class="network-select" @click="qhwlclick">
-						<ChainIcon :chainId="currentChainId" :isTestnet="false" class="chain-icon" />
-						<img src="@/static/icon/arrow-down.svg" alt="下拉箭头" class="arrow-icon" />
-					</div>
-				</div>
-				<div class="center-section" @click="showAddclick">
-					<div class="head_con">
-						<div class="content-wrapper">
-							<button class="account-button" data-testid="account-menu-icon">
-								<span class="account-info">
-									<div class="avatar-wrapper">
-										<headbox height="20" width="20"></headbox>
-									</div>
-									<span class="account-label"> Account {{ userinfos.idx + 1 }} </span>
-								</span>
-
-								<img src="@/static/icon/arrow-down.svg" alt="" class="arrow-icon" />
-							</button>
-
-							<span class="copy-text">{{ currentAddress }}</span>
-						</div>
-					</div>
-				</div>
-
-				<div class="right-section">
-					<div class="mhead_right_icons">
-						<img src="@/static/icon/copy.svg" alt="copy" class="icon" @click="copyText(currentAddress || '')" />
-						<img src="@/static/icon/notification.svg" alt="notification" class="icon" @click="tongzhiclick" />
-					</div>
-				</div>
-			</div>
-
-			<div class="spacing-20"></div>
-
-			<div class="asset-container">
-				<div class="ld">
-					<div class="ld-sd">
-						<div class="usd-text">US$</div>
-						<div class="total-balance">0</div>
-						<img src="@/static/icon/eye.svg" alt="eye-icon" class="eye-icon" @click="toggleVisibility" />
-					</div>
-					<div class="ld-xd">
-						<div class="plus-zero">+$0</div>
-						<div class="increase">+0%</div>
-					</div>
-				</div>
-
-				<div class="rd" @click="tzzhclick">
-					<div class="rd-1">{{ $t('setting.portfolio') }}</div>
-					<img src="@/static/icon/export.svg" alt="export-icon" class="rd-2" />
-				</div>
-			</div>
-
-			<div class="spacing-20"></div>
-
-			<banner
-				:bannerData="[
-					{
-						icon: require('@/static/icon/b1.png'),
-						des1: 'MetaMask Card', // 不需要国际化，直接写字符串
-						des2: { i18nKey: 'setting.banner.availableInRegions' }, // 需要国际化的文本
-					},
-					{
-						icon: require('@/static/icon/b2.png'),
-						des1: { i18nKey: 'setting.banner.topUpWallet' }, // 需要国际化
-						des2: { i18nKey: 'setting.banner.addOrTransferToken' }, // 需要国际化
-					},
-					{
-						icon: require('@/static/icon/b3.png'),
-						des1: [{ i18nKey: 'setting.banner.through' }, ' MetaMask ', { i18nKey: 'setting.banner.withdraw' }],
-						des2: { i18nKey: 'setting.banner.sellCrypto' }, // 卖出加密货币换取现金
-					},
-					{
-						icon: require('@/static/icon/b4.png'),
-						des1: { i18nKey: 'setting.banner.totalBalance' }, // 您的余额为汇总总额
-						des2: { i18nKey: 'setting.banner.balanceSetting' }, // 在设置中控制您的余额视图
-					},
-					{
-						icon: require('@/static/icon/b5.png'),
-						des1: 'Add multiple Secret Recovery Phrases',
-						des2: 'Import and use multiple wallets in MetaMask',
-					},
-				]" />
-
-			<div class="tab-nav">
-				<div v-for="(tabKey, index) in tabKeys" :key="tabKey" :class="['tab-item', { active: currentIndex === index }]" @click="selectTab(index)">
-					{{ $t(tabKey) }}
-				</div>
-			</div>
-		</div>
-
-		<div class="scroll-container">
-			<CoinAsset v-show="currentIndex === 0" @importTokens="handleImportTokens" />
-			<!-- <NftComponent v-show="currentIndex === 1" /> -->
-		</div>
-
-		<ChainChangeDialog v-if="showNetworkModal" @close="showNetworkModal = false" @select-network="handleSelectNetwork" @add-zdynetwork="handleAddZdyNetwork" />
-
-		<AddNetworkZdyPopup v-if="showAddPopup" @close="closePopup" />
-
-		<!-- 切换账号弹框 -->
-		<AcountChangeDialog v-if="selectUVueShow" @closeFn="selectUVueShow = false" @close="selectUVueShow = false" @accountRefresh="accountRefresh" />
-
-		<SendDialog v-if="SendDialogModal" :asset="selectedAsset" @cancelclick="SendDialogModal = false" @nextclick="onNextSend" @selectSendAccount="onSelectSendAccount" />
-
-		<tabVue :active="0" />
-	</div>
-</template>
 <style scoped lang="scss">
-.title-bar {
+.page-container {
+	width: 100vw;
+	height: 100vh;
 	display: flex;
-	align-items: center; /* 垂直居中 */
-	justify-content: space-between; /* 左中右三块分散 */
-	padding: 20px;
-	box-sizing: border-box;
-	width: 100%;
-	background-color: #fff;
-}
-.left-section,
-.center-section,
-.right-section {
-	display: flex;
-	align-items: center; /* 垂直居中 */
-}
-.center-section {
-	flex: 1; /* 占据中间剩余空间 */
-	justify-content: center; /* 水平居中 */
+	overflow: hidden;
+	padding-bottom: 50px;
+	flex-direction: column;
+
+	.fixed-top-content {
+		flex-shrink: 0;
+
+		.asset-container {
+			width: 100%;
+			display: flex;
+			padding: 0 20px;
+			box-sizing: border-box;
+			align-items: flex-start;
+			justify-content: space-between;
+
+			.ld {
+				gap: 4px;
+				display: flex;
+				flex-direction: column;
+
+				.ld-xd {
+					display: flex;
+					align-items: center;
+				}
+			}
+
+			.ld-sd {
+				display: flex;
+				align-items: center;
+			}
+
+			.rd {
+				height: 36px;
+				display: flex;
+				align-items: center;
+
+				.rd-1 {
+					font-size: 15px;
+					font-weight: 500;
+					color: #4259ff;
+				}
+
+				.rd-2 {
+					width: 20px;
+					height: 20px;
+					margin-left: 4px;
+				}
+
+				.van-button__text {
+					display: flex;
+					align-items: center;
+				}
+
+				&:active {
+					background-color: #4259ff;
+
+					.rd-1 {
+						color: #fff;
+					}
+				}
+			}
+		}
+
+		.title-bar {
+			width: 100%;
+			display: flex;
+			padding: 20px;
+			align-items: center;
+			box-sizing: border-box;
+			background-color: #fff;
+			justify-content: space-between;
+		}
+		.left-section,
+		.center-section,
+		.right-section {
+			display: flex;
+			align-items: center;
+		}
+		.center-section {
+			flex: 1;
+			justify-content: center;
+		}
+	}
 }
 
 .network-select {
-	height: 40px;
-	background-color: #f4f5f9;
-	border-radius: 20px;
+	gap: 8px;
+	height: 32px;
 	display: flex;
+	padding: 0 12px;
+	border-radius: 24px;
 	align-items: center;
 	justify-content: center;
-	cursor: pointer;
-	padding: 0 12px;
-	gap: 8px;
-	user-select: none;
+	background-color: #f4f5f9;
 }
 
 .chain-icon {
@@ -422,27 +471,6 @@ export default {
 	cursor: pointer;
 	user-select: none;
 }
-.asset-container {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	/* 可自行调整高度和margin */
-	padding: 0 20px;
-	box-sizing: border-box;
-}
-
-/* 左侧容器 */
-.ld {
-	display: flex;
-	flex-direction: column;
-}
-
-/* ld-sd 上部容器，水平排列 */
-.ld-sd {
-	display: flex;
-	align-items: center;
-}
 
 /* US$ 文字 */
 .usd-text {
@@ -470,13 +498,6 @@ export default {
 	user-select: none;
 }
 
-/* ld-xd 下部容器，水平排列 */
-.ld-xd {
-	display: flex;
-	align-items: center;
-	margin-top: 10px;
-}
-
 /* +$0 */
 .plus-zero {
 	font-size: 15px;
@@ -492,38 +513,11 @@ export default {
 	text-align: center;
 }
 
-/* 右侧容器 */
-.rd {
-	height: 40px;
-	border: 1px solid #4259ff;
-	padding: 0 20px;
-	display: flex;
-	border-radius: 40px; /* 你可以根据需要调整圆角大小 */
-	align-items: center;
-	cursor: pointer;
-	user-select: none;
-}
-
-/* 投资组合文字 */
-.rd-1 {
-	font-size: 16px;
-	color: #4259ff;
-}
-
-/* 图标 */
-.rd-2 {
-	width: 15px;
-	height: 15px;
-	margin-left: 8px;
-	filter: invert(34%) sepia(100%) saturate(1721%) hue-rotate(203deg) brightness(93%) contrast(92%);
-	/* 以上filter用于染色，如果需要，也可以直接用SVG填充颜色 */
-}
-
 .tab-nav {
-	margin: 20px;
+	height: 40px;
 	display: flex;
-	height: 50px;
-	//border-bottom: 1px solid #ccc; /* 整体底部线，可以去掉这行看效果 */
+	margin: 12px 0;
+	padding: 0 20px;
 }
 .tab-item {
 	flex: 1;
@@ -541,20 +535,6 @@ export default {
 .tab-item.active {
 	color: #4259ff;
 	border-bottom: 2px solid #4259ff; /* 只有激活时显示下划线 */
-}
-
-.page-container {
-	width: 100vw; /* 显式声明全屏宽度 */
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
-	overflow: hidden;
-}
-
-.fixed-top-content {
-	flex-shrink: 0;
-
-	/* 根据需要设置固定高度或者内容撑开 */
 }
 
 .scroll-container {
