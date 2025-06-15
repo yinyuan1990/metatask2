@@ -260,7 +260,6 @@ export default {
 			this.showAddPopup = false;
 		},
 		showAddclick() {
-			console.log('showAddclick');
 			this.selectUVueShow = true;
 		},
 		accountRefresh() {

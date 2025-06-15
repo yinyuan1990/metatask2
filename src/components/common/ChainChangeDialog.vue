@@ -135,7 +135,7 @@ export default {
 <style scoped lang="scss">
 .dialog-mask {
 	top: 0;
-  left: 0;
+	left: 0;
 	right: 0;
 	bottom: 0;
 	z-index: 999;
@@ -150,7 +150,6 @@ export default {
 	width: 100%;
 	display: flex;
 	max-height: 75vh;
-	max-width: 1400px;
 	padding: 20px 20px;
 	background: #fff;
 	box-sizing: border-box;
@@ -235,11 +234,11 @@ export default {
 }
 
 .more-icon {
-	width: 10px;
-	height: 10px;
-	object-fit: contain;
+	width: 20px;
+	height: 20px;
 	user-select: none;
 	margin-left: auto;
+	object-fit: contain;
 }
 
 .testnet-group .testnet-header {
