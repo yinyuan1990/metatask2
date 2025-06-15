@@ -371,7 +371,6 @@ class AccountManager {
 
   
   getCurrentChainId() {
-    
     const acc = this.getCurrentAccount()
     return acc ? acc.currentChainId : null
   }
@@ -530,4 +529,5 @@ export async function fetchTokenBalance({ rpcUrl, address, contractAddress }) {
 }
 
 export const accountManager = new AccountManager()
+
 window.accountManager = accountManager;

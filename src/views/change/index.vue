@@ -3,7 +3,7 @@ import tabVue from '@/components/tabbox/tab.vue'
 import ChainIcon from '@/components/common/ChainIcon.vue'
 import { networkManager, eventBus } from '@/bbjs/networkManager.js'
 import { accountManager } from '@/bbjs/AccountManager.js'
-import { bus } from '@/bbjs/bus.js' // 你的事件总线
+import { EventBus } from '@/bbjs/bus.js' // 你的事件总线
 
 export default {
   components: {
@@ -59,14 +59,14 @@ export default {
       networkManager.setSelectedNetworkType(100)
       this.show = false
 
-      bus.$emit('selectedNetworkTypeChanged', type)
+      EventBus.$emit('selectedNetworkTypeChanged', type)
        
     },
     selectCurrent() {
       this.selectedType = 1
       networkManager.setSelectedNetworkType(1)
       this.show = false
-      bus.$emit('selectedNetworkTypeChanged', type)
+      EventBus.$emit('selectedNetworkTypeChanged', type)
 
     },
     onPopularNetworkClick() {
