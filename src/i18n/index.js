@@ -5,6 +5,16 @@ Vue.use(VueI18n)
 
 const messages = {
   zh: {
+
+     importAccount: {
+      title: "导入账户",
+      warn1: "导入的账户可在您的钱包中查看，但无法通过 MetaMask 私钥助记词找回。",
+      warn2: "在此处详细了解导入的账户。",
+      pasteKey: "粘贴您的私钥字符串",
+      example: "例如：0x3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266",
+      orScan: "或扫描二维码",
+      import: "导入"
+    },
     import: {
       title: '导入私钥助记词',
       hintMnemonic: '我有12个单词组成的助记词',
@@ -390,6 +400,15 @@ mainnet: "主网",
   }
   },
   en: {
+    importAccount: {
+    title: "Import Account",
+    warn1: "The imported account can be viewed in your wallet, but cannot be recovered with MetaMask mnemonic.",
+    warn2: "Learn more about imported accounts here.",
+    pasteKey: "Paste your private key string",
+    example: "Example: 0x3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266",
+    orScan: "Or scan QR code",
+    import: "Import"
+  },
     import: {
       title: 'Import Private Key or Mnemonic',
       hintMnemonic: 'I have a 12-word mnemonic phrase',

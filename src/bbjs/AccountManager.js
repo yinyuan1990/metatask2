@@ -123,10 +123,9 @@ class AccountManager {
 
 
   isValidMnemonic(mnemonic) {
-    if (!mnemonic || typeof mnemonic !== 'string') return false
-    const words = mnemonic.trim().split(/\s+/)
-    if (words.length !== 12) return false
-    return bip39.validateMnemonic(words.join(' '))
+   
+    console.log("isValidMnemonic join ")
+    return bip39.validateMnemonic(mnemonic)
   }
 
 

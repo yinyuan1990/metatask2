@@ -59,12 +59,14 @@
   
   <script>
   import BScroll from 'better-scroll'
-  import { TxRecordManager } from '@/bbjs/TxRecordManager'
+
   import ChainIcon2 from '@/components/common/ChainIcon2.vue'
   import { assetManager } from "@/bbjs/AssetManager";
   import { accountManager } from '@/bbjs/AccountManager';
   import { formatSmartNumber } from '@/bbjs/utils'
   import { getSymbolByChainId, chainDefaultAssetMap,getNameByChainId,getExplorerUrlByChainId } from '@/bbjs/chain-default-assets'
+  import { TxRecordManager } from '@/bbjs/TxRecordManager'
+
   export default {
     components: { ChainIcon2 },
     data() {
@@ -109,6 +111,8 @@
             return getNameByChainId(this.chainId)
         },
       loadData() {
+
+        TxRecordManager.csLogin()
         this.records = TxRecordManager.getRecords(this.chainId, this.address)
       },
       async refreshList() {
@@ -178,7 +182,7 @@
   .i2-2-1 {
     display: flex;
     justify-content: space-between;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: bold;
     color: #000;
   }

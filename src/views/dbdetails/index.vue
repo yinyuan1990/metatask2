@@ -15,7 +15,7 @@ export default {
         timeKey:0,
         timeList:['1D','1W','1M','3M','1Y','所有'],
         setList: [
-            { name: '出入金', img: require('@/static/icon/plus-minus.svg'), id: 1 },
+            { name: '买入', img: require('@/static/icon/addicon.png'), id: 1 },
             { name: '兑换', img: require('@/static/icon/swap-horizontal.svg'), id: 2 },
             { name: '跨链桥', img: require('@/static/icon/bridge.svg'), id: 3 },
             { name: '发送', img: require('@/static/icon/arrow-2-up-right.svg'), id: 4 },
@@ -69,23 +69,36 @@ export default {
         window.open('https://portfolio.metamask.io/buy?metamaskEntry=ext_buy_banner_activity&chainId=1&metametricsId=0x90f3346b1d4226d7a4a6f6188cfd7b89cc71620bdeb47c62abae8570b8d94126&metricsEnabled=true&marketingEnabled=true','_blank')
     },
     setListChange(id){
+
+        console.log("join--->  "+id)
         let urls;
         if(id == 1){
             urls = 'https://portfolio.metamask.io/buy?metamaskEntry=ext_buy_sell_button&chainId=1&metametricsId=0x90f3346b1d4226d7a4a6f6188cfd7b89cc71620bdeb47c62abae8570b8d94126&metricsEnabled=true&marketingEnabled=true'
         }else if( id == 2){
             this.$router.push({
-                path:'/exchange'
+                path:'/swap'
             })
         }else if( id == 3){
           this.$router.push({
             path:'/klqbox'
           })
         }else if( id == 4){
-            this.$router.push({
-                path:'/openb'
-            })
+            
+
+          //const walletId = accountManager.getCurrentAccount()?.walletId; // 获取当前钱包ID
+          //const chainId = accountManager.getCurrentAccount()?.currentChainId; // 当前链id
+          const assets = this.dbitem;
+
+          const payload = {
+            assets: assets,
+          };
+
+          localStorage.setItem('transferData1', JSON.stringify(payload));
+          this.$router.push({ path: '/send1' });
+
         }else if( id == 5){
-            this.receivePaymentVueShow = true
+            //this.receivePaymentVueShow = true
+            this.$router.push({ path: '/receive' });
         }
 
         urls && ( window.open(urls,'_blank') )
@@ -242,11 +255,8 @@ export default {
 </script>
 <template>
   <div class="dbdetails">
-    <!-- 接收加密货币弹框 -->
-    <receivePaymentVue v-if="receivePaymentVueShow" 
-        @closeFn="receivePaymentVueShow = false"></receivePaymentVue>
-    <headtop></headtop>
-    <div class="dbdetails_head p16">
+     
+    <div  class="dbdetails_head p16">
       <span
         class="mm-box mm-icon ts backSvg mm-icon--size-sm mm-box--display-inline-block mm-box--color-inherit"
         @click="backFn"
@@ -256,6 +266,8 @@ export default {
         class="mm-box mm-icon ts more-vertical mm-icon--size-sm mm-box--display-inline-block mm-box--color-inherit"
       ></span>
     </div>
+
+
     <div class="p16">
       <h1
         class="mm-box mm-text mm-text--display-md mm-text--font-weight-medium mm-box--margin-bottom-1 mm-box--color-text-default mm-box--rounded-lg"
@@ -309,13 +321,13 @@ export default {
       </div>
     </div>
     <div class="eharbox" id="main" v-show="false"></div>
-    <!-- <div class="timelist p16 " v-shwo="false"> 
+     <div class="timelist p16 " v-shwo="false"> 
         <div class="timelist_it mm-text--body-sm-medium mm-box--color-text-alternative" 
         v-for="(it,i) in timeList" :key="i"
         :class="{'time-range-button__selected':timeKey==i}">
             {{ it }}
         </div>
-    </div> -->
+    </div> 
     <div class="setList">
         <button class="icon-button eth-overview__button" 
         data-testid="eth-overview-buy" 
@@ -521,31 +533,7 @@ export default {
         mm-box--padding-bottom-2 
         mm-box--padding-left-4 mm-box--color-text-default">您的活动</h3>
 
-        <div
-            class="
-            mm-box ramps-card lsjbls newbg
-            ramps-card-token mm-box--margin-2 mm-box--display-flex mm-box--gap-2 mm-box--flex-direction-column
-            mm-box--rounded-lg">
-            <div class="mm-box mm-box--display-flex mm-box--justify-content-space-between">
-                <h4 class="mm-box mm-text ramps-card__title mm-text--heading-sm mm-box--color-text-default">
-                    钱包使用提示</h4>
-                <button
-                    class="mm-box mm-button-icon mm-button-icon--size-sm mm-box--display-inline-flex mm-box--justify-content-center mm-box--align-items-center mm-box--color-info-inverse mm-box--background-color-transparent mm-box--rounded-lg"
-                    aria-label="关闭" data-testid="ramp-card-close-btn">
-                    <iconimgVue :url="closeSvg"
-                        class="mm-box mm-icon ts mm-icon--size-sm mm-box--display-inline-block mm-box--color-inherit">
-                    </iconimgVue>
-                </button>
-            </div>
-            <p class="mm-box mm-text ramps-card__body mm-text--body-md mm-box--color-text-default">添加代币可解锁使用
-                Web3 的更多方法。</p>
-            <button class="
-                mm-box mm-text mm-button-base 
-                mm-button-base--size-md ramps-card__cta-button mm-text--body-md-medium mm-box--padding-0 
-                mm-box--padding-right-4 mm-box--padding-left-4 mm-box--display-inline-flex mm-box--justify-content-center 
-                mm-box--align-items-center mm-box--color-text-default mm-box--background-color-background-alternative 
-                mm-box--rounded-pill p16" @click="goDbSc">代币市场</button>
-        </div>
+        
     </div>
 
   </div>

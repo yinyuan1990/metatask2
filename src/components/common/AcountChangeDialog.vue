@@ -70,10 +70,11 @@ export default {
 	},
 	methods: {
     fs1(){
-      
+      this.showCreateAcount = false;
       this.$router.push({ path: '/privateKey' });
     },
     fs2(){
+      this.showCreateAcount = false;
       this.$router.push({ path: '/leadingInA' });
     },
 		createEth() {

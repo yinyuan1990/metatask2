@@ -271,7 +271,7 @@ export default {
 	height: 100%;
 	font-family: Arial, sans-serif;
 	background: #fff;
-	padding: 15px;
+	padding: 10px;
 }
 
 /* 标题栏 */
@@ -315,7 +315,7 @@ export default {
 	margin-top: 10px;
 }
 .f1 {
-	width: 100px;
+	width: 60px;
 	font-size: 18px;
 	color: #000;
 	text-align: left;
@@ -370,7 +370,7 @@ export default {
 	border-bottom: 1px solid #ccc;
 }
 .t1 {
-	width: 100px;
+	width: 60px;
 	font-size: 18px;
 	color: #000;
 	text-align: left;

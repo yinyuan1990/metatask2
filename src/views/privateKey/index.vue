@@ -39,15 +39,20 @@
     >
       {{ $t('import.continue') }}
     </van-button>
+
+    <!-- 直接在模板中用 v-if 控制显示隐藏 -->
+		<Loading :active.sync="isLoading" :is-full-page="false" :can-cancel="false" :opacity="0.7" color="#4259ff" loader="spinner" width="64" height="64" />
   </div>
 </template>
 
 <script>
-
+  import { accountManager,save } from "@/bbjs/AccountManager";
 import { assetManager,isValidMnemonic } from "@/bbjs/AssetManager";
+
 export default {
   data() {
     return {
+      isLoading: false,
       words: [],
       isValid: false
     }
@@ -83,11 +88,11 @@ export default {
           return
         }
 
-        this.words = parsed
-        console.log("---> 00000 "+this.isValid +"--> "+ parsed + " ---> "+parsed.join(' '))
+       
 
-        this.isValid = assetManager.isValidMnemonic(""+parsed.join(' '))
-        console.log("---> "+this.isValid)
+        this.words = parsed
+        this.isValid = accountManager.isValidMnemonic(""+parsed.join(' '))
+        
         if (!this.isValid) {
           this.$toast.fail(this.$t('import.invalidWords'))
         }
@@ -97,14 +102,28 @@ export default {
         this.$toast.fail(this.$t('import.clipboardError') || '无法读取剪贴板内容，请检查权限或浏览器设置')
       }
     },
-    onContinue() {
+    async onContinue() {
       if (!this.isValid) {
         this.$toast.fail(this.$t('import.invalidWords'))
         return
       }
 
+      this.isLoading=true
       console.log('导入成功', this.words)
+      await this.$nextTick(); 
+      await new Promise((resolve) => setTimeout(resolve, 50));
       // TODO: 执行导入逻辑
+      try {
+				await accountManager.createFromMnemonic(accountManager.getCurrentAccount().payPassword);
+        this.$toast.fail(this.$t('assetManager.addSuccess'))
+			} catch (err) {
+				console.error(err);
+			} finally {
+				this.isLoading = false;
+			}
+      
+
+
     }
   }
 }

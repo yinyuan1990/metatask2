@@ -131,7 +131,7 @@
   import {estimateGasFee,sendToken,checkTxStatus } from '@/bbjs/transferService';
   import { fetchTokenBalance } from '@/bbjs/priceService'; // 请替换路径
   import { EventBus } from '@/bbjs/bus.js';
-  import { TxRecordManager } from '@/bbjs/TxRecordManager'
+ import { TxRecordManager } from '@/bbjs/TxRecordManager'
   export default {
     name: 'TransferConfirmPage',
     components: { Headbox, ChainIcon2 },
@@ -343,8 +343,9 @@
               ? (status.status === 1 ? 'confirmed' : 'failed')
               : 'pending';
 
+              console.log("saveRecord ",this.assets.chainId,"=====> "+this.fromAccount.child.address )
             // ✅ 写入交易记录
-            TxRecordManager.saveRecord(this.assets.chainId, this.fromAccount.address, {
+            TxRecordManager.saveRecord(this.assets.chainId, this.fromAccount.child.address, {
               txHash,
               symbol: this.assets.symbol,
               name: this.assets.name,
@@ -380,14 +381,7 @@
       ,
       async sendOkclick2() {
         // 这里触发事件或调用转账逻辑
-        /*
-        this.$emit('sendOkclick', {
-          fromAccount: this.fromAccount,
-          toAddress: this.toAddress,
-          assets: this.assets,
-          amount: this.amount,
-          networkFee: this.networkFee,
-        })*/
+
 
         this.isLoading = true;
 
