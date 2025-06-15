@@ -6,7 +6,13 @@ Vue.use(VueI18n)
 const messages = {
   zh: {
 
-
+ history: {
+    fromThisDevice: "从这台设备上",
+    sent: "已发送",
+    unit: "个",
+    viewOnExplorer: "在此查看完整的历史记录:",
+    marketDisclaimer: "市场数据由一个或多个第三方数据源提供，包括 CoinGecko。此类第三方内容仅供参考，不应被视为购买、出售或使用任何特定资产的建议。MetaMask 不建议将此内容用于任何特定目的，也不对其准确性负责。"
+  },
     account: {
       addAccount: "添加账户",
       createNewAccount: "创建新账户",
@@ -368,10 +374,6 @@ mainnet: "主网",
       customToken: "自定义代币组件区域",
       contractAddress: "请输入代币合约地址"
     },
-    
-   
-
-
   },
    assetManager: {
     addSuccess: "添加成功",
@@ -380,7 +382,13 @@ mainnet: "主网",
   }
   },
   en: {
-
+     history: {
+     fromThisDevice: "from this device",
+     sent: "Sent",
+     unit: "",
+     viewOnExplorer: "View full history on:",
+     marketDisclaimer: "Market data is provided by one or more third-party sources, including CoinGecko. This content is for informational purposes only and should not be considered advice to buy, sell, or use any particular asset. MetaMask does not recommend using this content for any specific purpose and is not responsible for its accuracy."
+    },
     account: {
       addAccount: "Add Account",
       createNewAccount: "Create New Account",

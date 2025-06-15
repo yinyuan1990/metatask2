@@ -76,5 +76,6 @@ export default {
 
 .private-key-btn {
   margin: 13px;
+  height: 50px;
 }
 </style>

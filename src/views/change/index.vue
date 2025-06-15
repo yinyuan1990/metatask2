@@ -1,113 +1,20 @@
-<script>
-import tabVue from '@/components/tabbox/tab.vue'
-import ChainIcon from '@/components/common/ChainIcon.vue'
-import { networkManager, eventBus } from '@/bbjs/networkManager.js'
-import { accountManager } from '@/bbjs/AccountManager.js'
-import { EventBus } from '@/bbjs/bus.js' // 你的事件总线
-
-export default {
-  components: {
-    tabVue,
-    ChainIcon
-  },
-  watch: {
-    show(val) {
-      if (val) {
-        this.loadNetworks()
-      }
-    }
-  },
-  data() {
-    return {
-      show: false,
-      refreshnetKey: 0, // 用于强制刷新网络列表
-      popularNetworks: [],
-      currentNetwork: null,
-      selectedType: networkManager.getSelectedNetworkType(), // 1 = 当前网络, 100 = 热门网络，默认当前网络
-    }
-  },
-  created() {
-    // 监听全局事件，确保跨组件同步
-    eventBus.$on('selectedNetworkTypeChanged', (type) => {
-      this.selectedType = type
-      this.refreshnetKey++ // 强制刷新网络列表
-    })
-  },
-  methods: {
-
-
-
-
-    loadNetworks() {
-      this.popularNetworks = networkManager.getAll().filter(net => net.isJoined && !net.isTestnet)
-      const currentAccount = accountManager.getCurrentAccount()
-      if (currentAccount && currentAccount.currentChainId) {
-        this.currentNetwork = networkManager.getByChainId(currentAccount.currentChainId)
-      } else {
-        this.currentNetwork = null
-      }
-
-      if (this.selectedType === 1) {
-        // 当前网络名，没有时显示默认文本
-        return this.currentNetwork ? this.currentNetwork.name : this.$t('setting.currentNetwork')
-      } else {
-        return this.$t('setting.popularNetworks')
-      }
-    },
-    selectPopular() {
-      this.selectedType = 100
-      networkManager.setSelectedNetworkType(100)
-      this.show = false
-
-      EventBus.$emit('selectedNetworkTypeChanged', type)
-       
-    },
-    selectCurrent() {
-      this.selectedType = 1
-      networkManager.setSelectedNetworkType(1)
-      this.show = false
-      EventBus.$emit('selectedNetworkTypeChanged', type)
-
-    },
-    onPopularNetworkClick() {
-      this.selectPopular()
-    },
-    onCurrentNetworkClick() {
-      this.selectCurrent()
-    }
-  },
-  computed: {
-    chooseText() {
-        this.refreshnetKey
-        this.selectedType = networkManager.getSelectedNetworkType()
-        this.popularNetworks = networkManager.getAll().filter(net => net.isJoined && !net.isTestnet)
-        const currentAccount = accountManager.getCurrentAccount()
-        if (currentAccount && currentAccount.currentChainId) {
-            this.currentNetwork = networkManager.getByChainId(currentAccount.currentChainId)
-        } else {
-            this.currentNetwork = null
-        }
-
-        if (this.selectedType === 1) {
-            // 当前网络名，没有时显示默认文本
-            return this.currentNetwork ? this.currentNetwork.name : this.$t('setting.currentNetwork')
-        } else {
-            return this.$t('setting.popularNetworks')
-        }
-    }
-  }
-}
-</script>
-
 <template>
-  <div class="setting">
-    <h1 class="h1">{{ $t('setting.transactionTitle') }}</h1>
-    
-    <div class="choose" @click="show = true">
-      {{ chooseText }}
-      <van-icon name="arrow-down" />
+  <div class="setting-container">
+    <!-- 顶部固定区域 -->
+    <div class="setting-header">
+      <h1 class="h1">{{ $t('setting.transactionTitle') }}</h1>
+      <div class="choose" @click="show = true">
+        {{ chooseText }}
+        <van-icon name="arrow-down" />
+      </div>
     </div>
 
+    <!-- 可滚动历史区域 -->
+    <div class="setting-history-scroll" ref="scrollWrapper">
+      <history />
+    </div>
+
+    <!-- 弹出筛选 -->
     <van-popup
       v-model="show"
       position="bottom"
@@ -118,7 +25,6 @@ export default {
       <div class="pop">
         <h1>{{ $t('setting.filterMethod') }}</h1>
 
-        <!-- 热门网络 -->
         <div
           class="popular-list"
           :class="{ active: selectedType === 100 }"
@@ -133,16 +39,11 @@ export default {
               class="popular-chain-icon-wrapper"
               :style="{ zIndex: popularNetworks.length - index, marginLeft: index === 0 ? '0' : '-8px' }"
             >
-              <ChainIcon
-                :chainId="item.chainId"
-                :isTestnet="item.isTestnet"
-                class="popular-chain-icon"
-              />
+              <ChainIcon :chainId="item.chainId" :isTestnet="item.isTestnet" class="popular-chain-icon" />
             </div>
           </div>
         </div>
 
-        <!-- 当前网络 -->
         <div
           class="current-list"
           :class="{ active: selectedType === 1 }"
@@ -167,94 +68,193 @@ export default {
   </div>
 </template>
 
+<script>
+import tabVue from '@/components/tabbox/tab.vue'
+import ChainIcon from '@/components/common/ChainIcon.vue'
+import { networkManager, eventBus } from '@/bbjs/networkManager.js'
+import { accountManager } from '@/bbjs/AccountManager.js'
+import { bus } from '@/bbjs/bus.js'
+import history from '@/components/history/history.vue'
+import BScroll from 'better-scroll'
+
+export default {
+  components: {
+    tabVue,
+    ChainIcon,
+    history
+  },
+  data() {
+    return {
+      show: false,
+      refreshnetKey: 0,
+      popularNetworks: [],
+      currentNetwork: null,
+      selectedType: networkManager.getSelectedNetworkType(),
+      bs: null
+    }
+  },
+  mounted() {
+    this.bs = new BScroll(this.$refs.scrollWrapper, {
+      scrollY: true,
+      click: true
+    })
+  },
+  created() {
+    eventBus.$on('selectedNetworkTypeChanged', (type) => {
+      this.selectedType = type
+      this.refreshnetKey++
+    })
+  },
+  methods: {
+    loadNetworks() {
+      this.popularNetworks = networkManager.getAll().filter(net => net.isJoined && !net.isTestnet)
+      const currentAccount = accountManager.getCurrentAccount()
+      if (currentAccount && currentAccount.currentChainId) {
+        this.currentNetwork = networkManager.getByChainId(currentAccount.currentChainId)
+      } else {
+        this.currentNetwork = null
+      }
+    },
+    selectPopular() {
+      this.selectedType = 100
+      networkManager.setSelectedNetworkType(100)
+      this.show = false
+      bus.$emit('selectedNetworkTypeChanged', 100)
+    },
+    selectCurrent() {
+      this.selectedType = 1
+      networkManager.setSelectedNetworkType(1)
+      this.show = false
+      bus.$emit('selectedNetworkTypeChanged', 1)
+    },
+    onPopularNetworkClick() {
+      this.selectPopular()
+    },
+    onCurrentNetworkClick() {
+      this.selectCurrent()
+    }
+  },
+  computed: {
+    chooseText() {
+      this.refreshnetKey
+      this.selectedType = networkManager.getSelectedNetworkType()
+      this.popularNetworks = networkManager.getAll().filter(net => net.isJoined && !net.isTestnet)
+      const currentAccount = accountManager.getCurrentAccount()
+      if (currentAccount && currentAccount.currentChainId) {
+        this.currentNetwork = networkManager.getByChainId(currentAccount.currentChainId)
+      } else {
+        this.currentNetwork = null
+      }
+      return this.selectedType === 1
+        ? (this.currentNetwork ? this.currentNetwork.name : this.$t('setting.currentNetwork'))
+        : this.$t('setting.popularNetworks')
+    }
+  }
+}
+</script>
+
 <style scoped lang="scss">
-.setting {
+.setting-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #fff;
+}
+
+.setting-header {
+  flex-shrink: 0;
+  background: #fff;
+  z-index: 2;
+  padding: 16px 20px;
+
+
   .h1 {
     font-size: 16px;
     font-weight: bold;
     color: #333;
-    line-height: 1.5;
     margin-bottom: 10px;
-    padding: 10px 20px;
   }
+
   .choose {
-    display: inline;
     border: 1px solid #eee;
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 14px;
     color: #000;
-    margin-left: 20px;
+    display: inline-flex;
+    align-items: center;
     cursor: pointer;
   }
-  .pop {
-    padding-bottom: 20px;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      padding: 20px 0;
+.setting-history-scroll {
+  flex: 1;
+  overflow: hidden; /* better-scroll 控制滚动 */
+}
+
+.pop {
+  padding-bottom: 20px;
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 20px 0;
+  }
+
+  .popular-list,
+  .current-list {
+    display: flex;
+    align-items: center;
+    padding: 8px 20px 8px 4px;
+    border-radius: 0px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    .popular-div,
+    .current-div {
+      width: 4px;
+      height: 40px;
+      border-radius: 4px;
+      background: #4459ff;
     }
-
-    .popular-list,
-    .current-list {
-      display: flex;
-      align-items: center;
-      padding: 8px 20px 8px 4px;
-      border-radius: 0px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      .popular-div,
-      .current-div {
-        width: 4px;
-        height: 40px;
-        border-radius: 4px;
-        background: #4459ff;
-      }
-      .popular-name,
-      .current-name {
-        font-size: 16px;
-        font-weight: 400;
-        margin-left: 10px;
-      }
+    .popular-name,
+    .current-name {
+      font-size: 16px;
+      font-weight: 400;
+      margin-left: 10px;
     }
+  }
 
-    .popular-list.active,
-    .current-list.active {
-      background: #e0e2ef;
-    }
+  .popular-list.active,
+  .current-list.active {
+    background: #e0e2ef;
+  }
 
-    .popular-chain-icons,
-    .current-chain-icons {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      white-space: nowrap;
-      margin-left: auto;
-    }
+  .popular-chain-icons,
+  .current-chain-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    margin-left: auto;
+  }
 
-    .popular-chain-icon-wrapper,
-    .current-chain-icon-wrapper {
-      width: 30px;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
-      /* marginLeft 由内联样式控制 */
-    }
+  .popular-chain-icon-wrapper,
+  .current-chain-icon-wrapper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .popular-chain-icon,
-    .current-chain-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      object-fit: contain;
-      /* 可加白边： box-shadow: 0 0 0 2px #fff; */
-    }
+  .popular-chain-icon,
+  .current-chain-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: contain;
   }
 }
 </style>

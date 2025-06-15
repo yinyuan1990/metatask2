@@ -1,11 +1,19 @@
 <script>
 import TitleBar from '@/components/common/TitleBar.vue'
 
+
 export default {
   components: {
     TitleBar,
   },
+  mounted() {
+    
+  },
   methods: {
+    async loadTxs() {
+      
+    },
+
   click1() {
     const title = this.$t('setting.privacyPolicy')
     const url = 'https://consensys.io/privacy-policy' // 你自己填真实链接
@@ -56,6 +64,9 @@ export default {
     })
   },
   click6() {
+
+   
+    this.loadTxs()
     const title = this.$t('setting.contactUs')
     const url = 'https://support.metamask.io' // 自行填写
     console.log('联系我们点击')

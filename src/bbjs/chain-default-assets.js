@@ -128,17 +128,7 @@ export const chainDefaultAssetMap = {
     coinGeckoPlatformId: 'ethereum',
     rpcUrl: 'https://carrot.megaeth.com/rpc',
     rpcUrls: ['https://carrot.megaeth.com/rpc']
-  },
-  //2222: {
-  //  symbol: 'KAVA',
-  //  name: 'Kava',
-  //  decimals: 18,
-  //  logoURI: 'https://assets.coingecko.com/coins/images/9763/large/kava.png', // CoinGecko 上的 Kava 图标
-  //  coinGeckoCoinId: 'kava',
-  //  coinGeckoPlatformId: 'kava', 
-  //  rpcUrl: 'https://rpc.kava.io', // 官方RPC地址
-  //  rpcUrls: ['https://rpc.kava.io', 'https://kava-rpc.chainnode.com'] // 备用RPC节点
-  //}
+  }
 }
 
 
@@ -390,16 +380,9 @@ export const chainArr = [
     "rpcUrls": ["https://carrot.megaeth.com/rpc"],
     "explorer": "https://mega-explorer.megaeth.net",
     "decimals": 18
-  }//,
-  //{
-  //  name: "Kava",
-  //  chainId: "2222",
-  //  symbol: "KAVA",
-  //  rpcUrls: ["https://rpc.kava.io"],
-  //  explorer: "https://explorer.kava.io",
-  //  decimals: 18
-  //}
+  }
 ]
+
 
 export function getSymbolByChainId(chainId) {
   const id = typeof chainId === 'string' ? parseInt(chainId, 10) : chainId
@@ -416,4 +399,10 @@ export function getNameByChainId(chainId) {
     return chainDefaultAssetMap[id].name
   }
   return 'UNKNOWN'
+}
+
+export function getExplorerUrlByChainId(chainId) {
+  const id = typeof chainId === 'string' ? parseInt(chainId, 10) : chainId;
+  const chain = chainArr.find(c => parseInt(c.chainId, 10) === id);
+  return chain?.explorer || '';
 }

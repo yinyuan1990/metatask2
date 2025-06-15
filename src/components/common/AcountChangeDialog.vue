@@ -19,6 +19,7 @@
 						</div>
 					</div>
 
+<<<<<<< Updated upstream
 					<!-- 右侧rd -->
 					<div class="rd">
 						<div class="rd1">
@@ -68,6 +69,68 @@ export default {
 	methods: {
 		createEth() {
 			console.log('create compelte-->2 ');
+=======
+      <addAccVue v-if="showCreateAcount" @closeFn="showCreateAcount = false" 
+       @createEth="createEth"
+       @fs1="fs1"
+       @fs2="fs2"
+      />
+    
+    </div>
+  </template>
+  
+  <script>
+  import { accountManager } from '@/bbjs/AccountManager'
+  import { assetManager } from '@/bbjs/AssetManager'
+  import { formatAddress, isValidAddress } from '@/bbjs/utils'
+  import { getSymbolByChainId } from '@/bbjs/chain-default-assets'
+  import Headbox from '@/components/icon/headbox.vue'
+  import addAccVue from '@/components/index/addAcc.vue'
+  import { EventBus } from '@/bbjs/bus.js' // 你的事件总线
+  export default {
+    components: {
+      Headbox,
+      addAccVue
+    },
+    data() {
+      return {
+        refrescount: 0,
+        showCreateAcount: false,
+        accList: [],
+      }
+    },
+    mounted() {
+      this.refrescount
+      this.init()
+    },
+    methods: {
+
+      fs1(){
+        this.showCreateAcount =false
+        this.$router.push({
+                path:"/privateKey"
+            })
+      },
+      fs2(){
+        this.showCreateAcount =false
+        this.$router.push({
+                path:"/leadingInA"
+            })
+      },
+      createEth(){
+        console.log("create compelte-->2 ")
+        
+        //EventBus.$emit('acc-changed')
+        console.log("create compelte-->3 ")
+        this.showCreateAcount =false
+        this.refresh()
+        console.log("create compelte-->4 ")
+      },
+      formatAddress(address, head = 6, tail = 4) {
+        if (!isValidAddress(address)) return address
+        return `${address.slice(0, head)}...${address.slice(-tail)}`
+      },
+>>>>>>> Stashed changes
 
 			//EventBus.$emit('acc-changed')
 			console.log('create compelte-->3 ');

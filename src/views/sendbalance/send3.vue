@@ -131,6 +131,7 @@
   import {estimateGasFee,sendToken,checkTxStatus } from '@/bbjs/transferService';
   import { fetchTokenBalance } from '@/bbjs/priceService'; // 请替换路径
   import { EventBus } from '@/bbjs/bus.js';
+  import { TxRecordManager } from '@/bbjs/TxRecordManager'
   export default {
     name: 'TransferConfirmPage',
     components: { Headbox, ChainIcon2 },
@@ -309,6 +310,75 @@
 
       },
       async sendOkclick() {
+          this.isLoading = true;
+
+          const chainInfo = chainDefaultAssetMap[this.assets.chainId];
+          if (!chainInfo) return;
+
+          const rpcUrl = chainInfo.rpcUrl;
+          const privateKey = accountManager.getAddressByWalletIdAndChainId(
+            this.fromAccount.walletId,
+            this.assets.chainId
+          ).privateKey;
+
+          const { success, txHash, error } = await sendToken({
+            rpcUrl: rpcUrl,
+            privateKey: privateKey,
+            to: this.toAddress,
+            amount: this.amount,
+            contractAddress: this.assets.contractAddress,
+            decimals: this.assets.decimals,
+          });
+
+          if (success) {
+            console.log('交易提交成功，txHash:', txHash);
+            this.isLoading = false;
+
+            // 3秒后检查确认状态
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            const status = await checkTxStatus(rpcUrl, txHash);
+            this.isLoading = false;
+
+            const finalStatus = status.confirmed
+              ? (status.status === 1 ? 'confirmed' : 'failed')
+              : 'pending';
+
+            // ✅ 写入交易记录
+            TxRecordManager.saveRecord(this.assets.chainId, this.fromAccount.address, {
+              txHash,
+              symbol: this.assets.symbol,
+              name: this.assets.name,
+              amount: this.amount,
+              price: this.assets.priceUsd || null,
+              contractAddress: this.assets.contractAddress || '',
+              status: finalStatus,
+              timestamp: Date.now(),
+              chainId: this.assets.chainId,
+            });
+
+            this.getBanlance(); // 更新余额
+
+            console.log(finalStatus === 'confirmed' ? '交易成功' : '交易失败');
+          } else {
+            this.isLoading = false;
+            console.error('交易失败原因:', error);
+
+            // ✅ 即使失败也记录（标记 failed）
+            TxRecordManager.saveRecord(this.assets.chainId, this.fromAccount.address, {
+              txHash: txHash || '', // 有些失败情况没有 txHash
+              symbol: this.assets.symbol,
+              name: this.assets.name,
+              amount: this.amount,
+              price: this.assets.priceUsd || null,
+              contractAddress: this.assets.contractAddress || '',
+              status: 'failed',
+              timestamp: Date.now(),
+              chainId: this.assets.chainId,
+            });
+          }
+        }
+      ,
+      async sendOkclick2() {
         // 这里触发事件或调用转账逻辑
         /*
         this.$emit('sendOkclick', {

@@ -18,12 +18,12 @@ export default {
     backFn() {
       this.$emit("backFn",'signttVueShow');
     },
-    addQianbao(){ // 私钥添加钱包
+    async addQianbao(){ // 私钥添加钱包
       if( !isValidPrivateKey(this.signVal) ) {
         Toast('私钥不合法');
         return
       }
-      let acc = accountManager.importPrivateKey(this.signVal)
+      let acc = await accountManager.importPrivateKey(this.signVal)
 
       let it = acc.addresses[0]
       assetManager.addDefaultMainAsset( acc.walletId,it.chainId,it.address );

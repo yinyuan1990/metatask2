@@ -135,11 +135,11 @@ export default {
       },500)
       
     },
-    setAddFn(type) { // 下一步
+    async setAddFn(type) { // 下一步
       if (!this.oneCheck) return;
       if( this.tabKey == 0 && type == 1 ){
         // this.createWallet = createWallet()
-        this.createWallet = accountManager.createFromMnemonic()
+        this.createWallet = await accountManager.createFromMnemonic()
         console.log(  this.createWallet  )
         // this.createWallet.mnemonic
         this.mnemonicWords = this.createWallet.mnemonic.split(' ').map(it=>{

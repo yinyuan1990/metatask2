@@ -1,6 +1,30 @@
 <script>
 import { accountManager } from '@/bbjs/AccountManager';
 export default {
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
+  methods: {
+    closeFn() {
+      this.$emit("closeFn");
+    },
+    backFn(){
+      this.$emit('backFn','addAccVueShow')
+    },
+    goTanFn(showtxt){ // 去弹框
+
+      //this.$emit('nextFn',{hide:'addAccVueShow',show:showtxt})
+      if(showtxt === "importVocabularyVueShow"){  
+         console.log("importVocabularyVueShow")
+
+         this.$emit('fs1','fs1')
+      }else{
+         this.$emit('fs2','fs2')
+      }
+    },
+    /*
 	data() {
 		return {
 			isLoading: false,
@@ -31,6 +55,25 @@ export default {
       this.$emit("createEth");
        
     },*/
+    async createEth() {
+      console.log("createEth")
+      //this.isLoading = true;
+      //await this.$nextTick(); // 等 Vue 渲染完 isLoading = true
+      // 再加一个小延迟，确保 Loading 组件已经挂载
+      //await new Promise((resolve) => setTimeout(resolve, 50));
+      try {
+        await accountManager.createFromMnemonic(accountManager.getCurrentAccount().payPassword);
+        this.$emit("createEth");
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.isLoading = false;
+      }
+
+      
+    }
+
+  },
 		async createEth() {
 			console.log('createEth');
 			//this.isLoading = true;

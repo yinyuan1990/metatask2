@@ -172,6 +172,7 @@ export default {
 				},
 			});
 
+<<<<<<< Updated upstream
 			this.bs.on('pullingDown', async () => {
 				await this.refreshPricesAndBalances();
 				this.bs.finishPullDown();
@@ -196,6 +197,86 @@ export default {
 				iconUrl: getTokenLogo(it.chainId, it.contractAddress, it.symbol),
 				balance: it.balance ?? 0,
 			}));
+=======
+              </div>
+              <div class="ld-2">
+                <div class="token-name">
+                  <div class="asset-row">
+                    {{ item.name }}
+                    <template v-if="item.chainId == 1 && item.isMainCoin">
+                      <div class="stake-action" @click="handleStakeClick(item)">
+                        {{ $t('setting.common.stake') }}
+                        <div class="icon-stake"></div>
+                      </div>
+                    </template>
+                  </div>
+
+                </div>
+                <div
+                  class="token-change"
+                  :class="item.change24h >= 0 ? 'up' : 'down'"
+                >
+                  {{ formatChange(item.change24h) }}
+                </div>
+              </div>
+            </div>
+            <div class="rd">
+              <div class="balance">
+                {{ formatSmartNumber(item.balance, { decimals: 4 }) }} {{ item.symbol }}
+              </div>
+              <div class="value">
+                ${{ formatSmartNumber(item.price * item.balance, { decimals: 4 }) }}
+              </div>
+            </div>
+          </div>
+  
+          <!-- 资产导入放入滚动内容尾部 -->
+         <div class="asset-import" @click="drdbclick" style="margin-top:20px;">
+            <span class="gray-text">{{ $t('setting.noTokensFound') }}</span>
+            <span class="blue-text">{{ $t('setting.importToken') }}</span>
+        </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+  import BScroll from 'better-scroll'
+  import ChainIcon2 from '@/components/common/ChainIcon2.vue'
+  import { accountManager,save } from "@/bbjs/AccountManager";
+  import { assetManager } from "@/bbjs/AssetManager";
+  import { getTokenLogo } from '@/bbjs/iconService.js'
+  import { fetchTokenPrice,fetchTokenPrice2,  fetchTokenBalance,fetchTokenBalance2 } from '@/bbjs/priceService'
+  import { chainDefaultTokenMap } from "@/bbjs/chain-default-assets";
+  import { networkManager } from '@/bbjs/networkManager.js'
+  import { EventBus } from '@/bbjs/bus.js' // 你的事件总线
+  export default {
+    components: { ChainIcon2 },
+    destroyed() {
+    // 记得在销毁时移除监听
+    
+  },
+  beforeDestroy() {
+    EventBus.$off('network-changed', this.onNetworkChanged)
+    EventBus.$off('acc-changed', this.onAccountChanged)
+    EventBus.$off('as-changed', this.onAccountChanged1)
+    EventBus.$off('selectedNetworkTypeChanged', (type) => {
+     this.selectedType = type
+    }
+  )
+},
+    created() {
+    // 监听全局事件，确保跨组件同步
+    EventBus.$on('selectedNetworkTypeChanged', (type) => {
+      this.selectedType = type
+    })
+    EventBus.$on('network-changed',this.onNetworkChanged)
+    EventBus.$on('acc-changed',this.onAccountChanged)
+    EventBus.$on('as-changed',this.onAccountChanged1)
+  },
+    computed: {
+    chooseText() {
+>>>>>>> Stashed changes
 
 			this.coinList = arrbox; // 先显示初始数据
 
