@@ -11,6 +11,7 @@
   </template>
   
   <script>
+   import { accountManager,save } from "@/bbjs/AccountManager";
   export default {
     name: 'LogoutConfirmDialog',
     methods: {
@@ -18,8 +19,41 @@
         this.$emit('close')
       },
       confirmLogout() {
-        this.$emit('confirm')
-        this.$emit('close')
+
+
+
+        var operate = accountManager.deleteCurrentAccount()
+
+        if(operate){
+
+
+          this.$toast.success("操作成功");
+          if (accountManager.getAllAccounts().length === 0) {
+            // 清空当前缓存和状态（如果有 Vuex，也一起清理）
+            localStorage.clear()
+            // 强制跳转登录页并清空历史记录
+            this.$router.replace({ path: '/login' })
+            
+            // ⏱️ 等 DOM 渲染完成后刷新整个页面，彻底干掉导航栈
+            setTimeout(() => {
+              location.reload()
+            }, 100)
+
+          }else{
+
+            
+            EventBus.$emit('deleteAccount');
+            this.$emit('close')
+             
+          }
+
+          
+        }else{
+          this.$toast.fail("操作失败");
+        }
+
+
+        
       }
     }
   }

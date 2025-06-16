@@ -1,13 +1,16 @@
 <script>
 import TitleBar from '@/components/common/TitleBar.vue'
 import { accountManager } from "@/bbjs/AccountManager"
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 export default {
     components:{
       TitleBar,
+      ConfirmDialog,
       IosSwitch: () => import('@/components/common/IosSwitch.vue'), // 异步加载开关组件
     },
   data() {
     return {
+      openResetDialog: false,
        show:false,
       smartTxEnabled: false, // 智能交易开关
       hexDataEnabled: false, // 显示十六进制数据开关
@@ -20,6 +23,7 @@ export default {
   },
   methods:{
     zzzhclick() {
+      this.openResetDialog = true;
     console.log('点击了重设账户')
     // 👉 此处写实际的账户重置逻辑
     },
@@ -117,7 +121,11 @@ export default {
 </section> 
 
 
-
+<ConfirmDialog v-if="openResetDialog" @close="openResetDialog = false">
+      <template v-slot:title>重设账户？</template>
+      重置账户将清除您的交易历史记录
+      <template v-slot:confirm-btn-text>是，重置</template>
+    </ConfirmDialog>
 
   </div>
 </template>

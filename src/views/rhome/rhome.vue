@@ -16,7 +16,7 @@
 									<div class="avatar-wrapper">
 										<headbox height="20" width="20"></headbox>
 									</div>
-									<span class="account-label"> Account {{ userinfos.idx + 1 }} </span>
+									<span class="account-label"> Account {{ getAcoountIndex }} </span>
 								</span>
 								<img src="@/static/icon/arrow-down.svg" alt="" class="arrow-icon" />
 							</button>
@@ -115,10 +115,16 @@ import AddNetworkZdyPopup from '@/components/common/AddNetworkZdyPopup.vue';
 import AcountChangeDialog from '@/components/common/AcountChangeDialog.vue';
 import nft from '@/components/nft/index.vue';
 export default {
+
+	
 	beforeDestroy() {
+
+        
+		EventBus.$on('deleteAccount',this.deleteAccount1)
 		EventBus.$off('send-acount', this.sendAcount);
 	},
 	created() {
+		EventBus.$off('deleteAccount',this.deleteAccount1)
 		EventBus.$on('send-acount', this.sendAcount);
 	},
 	computed: {
@@ -142,8 +148,10 @@ export default {
 			this.currentAccountVersion;
 			return accountManager.getAllAccounts() || [];
 		},
+		/*
 		userinfos() {
 			this.currentAccountVersion;
+
 			if (this.currentAccount) {
 				const idx = this.accounts.findIndex(acc => acc.address === this.currentAccount.address);
 				return {
@@ -152,7 +160,18 @@ export default {
 				};
 			}
 			return { child: null, idx: 0 };
-		},
+		},*/
+		userinfos() {
+			const current = this.currentAccount;
+			if (current) {
+				const idx = this.accounts.findIndex(acc => acc.walletId === current.walletId);
+				return {
+				child: current,
+				idx: idx === -1 ? 0 : idx,
+				};
+			}
+			return { child: null, idx: 0 };
+			},
 		currentChainId() {
 			this.currentAccountVersion;
 			return this.currentAccount ? this.currentAccount.currentChainId : null;
@@ -162,6 +181,13 @@ export default {
 			console.log('currentAddress', formatAddress(accountManager.getCurrentAddress().address || ''));
 			return formatAddress(accountManager.getCurrentAddress().address || '');
 		},
+		getAcoountIndex(){
+
+			this.currentAccountVersion;
+		    const m =	 this.userinfos
+			console.log("rnm-->  "+m.idx) 
+			return  m.idx + 1
+		}
 	},
 	components: {
 		TitleBar,
@@ -191,6 +217,11 @@ export default {
 		};
 	},
 	methods: {
+
+		deleteAccount1(){
+			console.log("rhome deleteAccount1---> ")
+            this.currentAccountVersion++; // 强制触发computed重新计算
+		},
 		sendAcount() {
 			console.log('sendAcount-------->');
 			//this.SendDialogModal=true // 发送弹窗

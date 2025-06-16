@@ -213,8 +213,8 @@
   .tx-hint {
     font-size: 14px;
     color: #888;
-    text-align: center;
-    margin-top: 16px;
+    text-align: left;
+    margin-top: 30px;
     padding: 0 12px;
     line-height: 1.5;
   }

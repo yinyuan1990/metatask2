@@ -6,6 +6,34 @@ Vue.use(VueI18n)
 const messages = {
   zh: {
 
+
+    secret: {
+      srp: '助记词（SRP）',
+      accessDesc: ' 授予对您的钱包和资金的完整访问权限。',
+      ownSrp: '您是自己的 SRP 的所有者',
+      neverAsk: 'MetaMask 支持团队绝对不会要求提供此项这个。',
+      inputPassword: '输入密码继续',
+      password: '密码',
+      passwordError: '密码不正确',
+      yourPrivateKey: '您的私钥',
+      copy: '复制到剪贴板',
+      revealSrp: '按住以显示 SRP',
+      keepSafe: '保护好您的 助记词 安全',
+      dontShare: '请勿与任何人分享。',
+      phishingWarn: '但网络钓鱼者可能会。',
+      srpAccess: '提供 对您的钱包和资金的完整访问权限。',
+    },
+    common: {
+      cancel: '取消',
+      next: '下一步',
+      finish: '完成',
+      text: '文本',
+      qr: 'QR',
+    },
+
+     account: {
+       importedByPrivateKey: "该账户是以私钥的方式导入的！"
+     },
     nft: {
       chooseText: '请选择',
       emptyTitle: '尚无 NFT',
@@ -468,6 +496,33 @@ mainnet: "主网",
   }
   },
   en: {
+
+    secret: {
+      srp: 'Secret Recovery Phrase (SRP)',
+      accessDesc: ' grants full access to your wallet and funds.',
+      ownSrp: 'You are the sole owner of your SRP',
+      neverAsk: 'MetaMask support will never ask for this.',
+      inputPassword: 'Enter password to continue',
+      password: 'Password',
+      passwordError: 'Incorrect password',
+      yourPrivateKey: 'Your Private Key',
+      copy: 'Copy to clipboard',
+      revealSrp: 'Hold to reveal SRP',
+      keepSafe: 'Keep your recovery phrase secure',
+      dontShare: 'Do not share it with anyone.',
+      phishingWarn: 'But phishers might.',
+      srpAccess: 'gives full access to your wallet and funds.',
+    },
+    common: {
+      cancel: 'Cancel',
+      next: 'Next',
+      finish: 'Finish',
+      text: 'Text',
+      qr: 'QR',
+    },
+    account: {
+      importedByPrivateKey: "This account was imported using a private key!"
+    },
 
     nft: {
       chooseText: 'Please choose',

@@ -212,6 +212,26 @@ const routes = [
     path: '/leadingInA',
     name: 'leadingInA',
     component: () => import('@/views/leadingInA/index.vue')
+  },
+  {
+    path: "/update-password",
+    name: "UpdatePassword",
+    component: () => import("@/views/update-password/index.vue"),
+  },
+  {
+    path: "/display-private-key-mnemonics",
+    name: "DisplayPrivateKeyMnemonics",
+    component: () => import("@/views/display-private-key-mnemonics/index.vue"),
+  },
+  {
+    path: "/display-private-key",
+    name: "DisplayPrivateKey",
+    component: () => import("@/views/display-private-key/index.vue"),
+  },
+  {
+    path: "/manage-link",
+    name: "ManageLink",
+    component: () => import("@/views/manage-link/index.vue"),
   }
 ]
 

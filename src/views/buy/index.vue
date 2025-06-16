@@ -19,16 +19,16 @@ export default {
   },
   computed:{
     userinfos() {
-			
-			if (accountManager.getCurrentAccount()) {
-				const idx = accountManager.getAllAccounts().findIndex(acc => acc.address === accountManager.getCurrentAccount().address);
+			const current = accountManager.getCurrentAccount();
+			if (current) {
+				const idx = accountManager.getAllAccounts().findIndex(acc => acc.walletId === current.walletId);
 				return {
-					child: accountManager.getCurrentAccount(),
-					idx: idx === -1 ? 0 : idx,
+				child: current,
+				idx: idx === -1 ? 0 : idx,
 				};
 			}
 			return { child: null, idx: 0 };
-		},
+			},
     currentAddress() {
 			
 			return formatAddress(accountManager.getCurrentAddress().address || '');

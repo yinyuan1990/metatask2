@@ -212,7 +212,7 @@ export default {
 }
 
 .ld21 {
-	font-weight: 700;
+	//font-weight: 700;
 	font-size: 18px;
 	color: #000;
 	user-select: none;
@@ -243,7 +243,7 @@ export default {
 }
 
 .rd11 {
-	font-weight: 700;
+	//font-weight: 700;
 	font-size: 18px;
 	color: #000;
 	user-select: none;

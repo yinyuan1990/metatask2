@@ -129,8 +129,7 @@ class AccountManager {
   }
 
 
-  
- 
+
   async importMnemonic(mnemonic, payPassword) {
     console.log('importMnemonic', mnemonic, payPassword)
   
@@ -139,34 +138,36 @@ class AccountManager {
     }
   
     const id = crypto.randomUUID?.() || Date.now().toString()
+    const path = DEFAULT_PATH
+    const wallet = ethers.Wallet.fromMnemonic(mnemonic, path)
   
-    // 创建地址和钱包
-    const addresses = Object.keys(folderMap).map(chainId => {
-      const numericChainId = Number(chainId)
-      const path = getDerivePathByChainId(numericChainId)
-      const wallet = ethers.Wallet.fromMnemonic(mnemonic, path)
+    const sharedEntry = {
+      coinType: 60,
+      address: wallet.address,
+      path,
+      publicKey: wallet.publicKey,
+      privateKey: wallet.privateKey,
+    }
   
-      return {
-        chainId: chainId,
-        coinType: 60,
-        address: wallet.address,
-        path,
-        publicKey: wallet.publicKey,
-        privateKey: wallet.privateKey,
-      }
-    })
+    // 所有 EVM 链复用相同的地址/私钥
+    const addresses = Object.keys(folderMap).map(chainId => ({
+      chainId,
+      ...sharedEntry,
+    }))
   
-    // 异步等待所有 addDefaultMainAsset 执行完成
+    const start = performance.now()
+    // 添加所有链的主币资产
     await Promise.all(
       addresses.map(addr =>
         assetManager.addDefaultMainAsset(id, addr.chainId, addr.address).catch(console.error)
       )
     )
-  
+    const end = performance.now()
+    console.log(`批量添加主币耗时: ${(end - start).toFixed(2)}ms`)
     const account = {
       walletId: id,
       mnemonic,
-      privateKey: null,
+      privateKey: wallet.privateKey,
       importType: 'mnemonic',
       addresses,
       currentChainId: '1',
@@ -179,6 +180,66 @@ class AccountManager {
   
     return account
   }
+  
+  
+ 
+  /*
+  async importMnemonic(mnemonic, payPassword) {
+    console.log('importMnemonic', mnemonic, payPassword)
+  
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw new Error('无效助记词')
+    }
+  
+    const id = crypto.randomUUID?.() || Date.now().toString()
+  
+
+
+    var privateKeycopy =""
+
+    
+    // 创建地址和钱包
+    const addresses = Object.keys(folderMap).map(chainId => {
+      const numericChainId = Number(chainId)
+      const path = getDerivePathByChainId(numericChainId)
+      const wallet = ethers.Wallet.fromMnemonic(mnemonic, path)
+      privateKeycopy = wallet.privateKey
+      return {
+        chainId: chainId,
+        coinType: 60,
+        address: wallet.address,
+        path,
+        publicKey: wallet.publicKey,
+        privateKey: wallet.privateKey,
+      }
+    })
+
+
+
+  
+    // 异步等待所有 addDefaultMainAsset 执行完成
+    await Promise.all(
+      addresses.map(addr =>
+        assetManager.addDefaultMainAsset(id, addr.chainId, addr.address).catch(console.error)
+      )
+    )
+  
+    const account = {
+      walletId: id,
+      mnemonic,
+      privateKey: privateKeycopy,
+      importType: 'mnemonic',
+      addresses,
+      currentChainId: '1',
+      payPassword,
+    }
+  
+    this.accounts.push(account)
+    if (!this.currentAccountId) this.currentAccountId = id
+    this.save()
+  
+    return account
+  }*/
   
   async importPrivateKey(privateKey, payPassword) {
     if (!/^0x[0-9a-fA-F]{64}$/.test(privateKey)) {
@@ -198,14 +259,15 @@ class AccountManager {
         privateKey: wallet.privateKey,
       }
     })
-  
+    const start = performance.now()
     // 等待所有主币资产添加完成
     await Promise.all(
       addresses.map(addr =>
         assetManager.addDefaultMainAsset(id, addr.chainId, addr.address).catch(console.error)
       )
     )
-  
+    const end = performance.now()
+    console.log(`批量添加主币耗时: ${(end - start).toFixed(2)}ms`)
     const account = {
       walletId: id,
       mnemonic: null,
@@ -361,6 +423,20 @@ class AccountManager {
     return account
   }*/
 
+      /**
+   * 更新当前账户的支付密码
+   * @param {string} newPassword 新密码
+   * @returns {boolean} 是否更新成功
+   */
+  updatePayPassword(newPassword) {
+    const acc = this.getCurrentAccount()
+    if (!acc) return false
+
+    acc.payPassword = newPassword
+    this.save()
+    return true
+  }
+
   getCurrentAccountIndex() {
     return this.accounts.findIndex(acc => acc.walletId === this.currentAccountId)
   }
@@ -407,6 +483,33 @@ class AccountManager {
     this.save()
     return true
   }
+
+
+  deleteCurrentAccount() {
+    const currentId = this.currentAccountId
+
+    console.log("deletebefor "+this.getCurrentAddress().address)
+    if (!currentId) return false
+
+    const index = this.accounts.findIndex(acc => acc.walletId === currentId)
+    if (index === -1) return false
+
+    // 删除当前账号
+    this.accounts.splice(index, 1)
+
+    if (this.accounts.length === 0) {
+      this.currentAccountId = null
+    } else {
+      // 设置新的当前账号
+      this.currentAccountId = this.accounts[0].walletId
+      console.log("deleteafter "+this.getCurrentAddress().address)
+    }
+
+    this.save()
+    
+    return true
+  }
+
 
   
   /**

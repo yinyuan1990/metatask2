@@ -112,6 +112,8 @@
     EventBus.$off('acc-changed', this.onAccountChanged)
     EventBus.$off('as-changed', this.onAccountChanged1)
     EventBus.$off('selectedNetworkTypeChanged',this.cctypeChnage)
+    //deleteAccount
+    EventBus.$off('deleteAccount',this.deleteAccount)
   
 },
     created() {
@@ -120,6 +122,7 @@
     EventBus.$on('network-changed',this.onNetworkChanged)
     EventBus.$on('acc-changed',this.onAccountChanged)
     EventBus.$on('as-changed',this.onAccountChanged1)
+    EventBus.$on('deleteAccount',this.deleteAccount)
   },
     computed: {
     chooseText() {
@@ -174,6 +177,12 @@
     },
         onSwapClick() {
         console.log('swap clicked')
+      },
+      deleteAccount(){
+        console.log("rhome coinassets deleteAccount---> ")
+        this.refreshnetKey++;
+      console.log('账号已更改:');
+      this.initData(); // 重新加载数据
       },
       onAccountChanged() {
         this.refreshnetKey++;
