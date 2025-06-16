@@ -140,7 +140,7 @@
 
 
 
-          var platformId = meta?.coinGeckoPlatformId
+          var platformId = meta?.coinGeckoCoinId
           console.log("join 5" +platformId)
           if (Number(this.currentChainId) === 56) {
             console.log("join 6" +platformId)

@@ -175,7 +175,7 @@ class NetworkManager {
   getSelectedNetworkType() {
     return this.selectedNetworkType
   }
-
+   
   saveToStorage() {
     const joinedIds = this.chains.filter(c => c.isJoined).map(c => c.chainId)
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(joinedIds))

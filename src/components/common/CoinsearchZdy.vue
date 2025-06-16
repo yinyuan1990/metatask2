@@ -157,7 +157,7 @@
 
           
           const rpcUrl = meta?.rpcUrl
-          var platformId = meta?.coinGeckoPlatformId
+          var platformId = meta?.coinGeckoCoinId
           if (Number(this.currentChainId) === 56) {
             platformId = "binance-smart-chain"
           }
