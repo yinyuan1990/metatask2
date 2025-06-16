@@ -1,5 +1,7 @@
 // import fetch from 'node-fetch' // Node.js 环境需引入，浏览器可忽略
 import { ethers } from 'ethers'
+
+const BASE_URL = 'https://api.coingecko.com/api/v3'
 /**
  * 查询主币或代币当前价格和涨幅
  */
@@ -93,7 +95,7 @@ export async function fetchTokenDetailWithFallback({ rpcUrl, platformId, contrac
       name: data.name,
       symbol: data.symbol,
       decimals: data.detail_platforms?.[platformId]?.decimals || 18,
-      logo: data.image.large,
+      logo: data.image?.large  || "",
       price: data.market_data.current_price.usd,
       change24h: data.market_data.price_change_percentage_24h,
       marketCap: data.market_data.market_cap.usd,
@@ -209,7 +211,7 @@ export async function fetchTokenDetail({coinGeckoPlatformId, contractAddress = '
   return {
     name: data.name,
     symbol: data.symbol,
-    logo: data.image.large,
+    logo: "",
     marketCap: data.market_data.market_cap.usd,
     volume: data.market_data.total_volume.usd,
     circulatingSupply: data.market_data.circulating_supply,
@@ -384,4 +386,35 @@ export async function fetchTokenDetailFromCoingecko(platformId, contractAddress)
     source: 'coingecko',
     updatedAt: Date.now()
   }
+}
+
+
+/**
+ * 获取主币历史价格数据（如 ETH / BTC）
+ * @param {string} coinId CoinGecko 的 coin id（如 'ethereum'）
+ * @param {number|string} days 查询多少天的数据（如 1、7、30、'max'）
+ * @returns {Promise<Array<[timestamp, price]>>}
+ */
+export async function fetchMainCoinHistory(platformId, days = 1) {
+  const url = `${BASE_URL}/coins/${platformId}/market_chart?vs_currency=usd&days=${days}`
+  const res = await fetch(url)
+  const data = await res.json()
+  return data.prices // [ [timestamp, price], ... ]
+}
+
+/**
+ * 获取代币历史价格（通过合约地址）
+ * @param {string|number} chainId EVM链ID
+ * @param {string} contractAddress 合约地址
+ * @param {number|string} days 查询天数
+ * @returns {Promise<Array<[timestamp, price]>>}
+ */
+export async function fetchTokenHistory(platformId, contractAddress, days = 1) {
+
+  
+  const url = `${BASE_URL}/coins/${platformId}/contract/${contractAddress.toLowerCase()}/market_chart/?vs_currency=usd&days=${days}`
+  console.log("platformId: ====> "+url)
+  const res = await fetch(url)
+  const data = await res.json()
+  return data.prices
 }

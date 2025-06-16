@@ -28,7 +28,7 @@
 					<div v-for="(net, index) in filteredOtherNetworks" :key="index" class="network-item" @click="addNetwork(net)">
 						<ChainIcon :chainId="net.chainId" class="network-icon" />
 						<span class="network-name">{{ net.name }}</span>
-						<span class="add-btn" @click.stop="addNetwork">{{ $t('setting.add') }}</span>
+						<span class="add-btn">{{ $t('setting.add') }}</span>
 					</div>
 				</div>
 				<!-- 测试网络 -->
@@ -222,6 +222,7 @@ export default {
 }
 
 .network-icon {
+	margin-top: 10px;
 	width: 30px;
 	height: 30px;
 	margin-right: 12px;

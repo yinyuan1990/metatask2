@@ -3267,13 +3267,12 @@ easy-stack@1.0.1:
   resolved "https://registry.npmmirror.com/easy-stack/-/easy-stack-1.0.1.tgz"
   integrity sha512-wK2sCs4feiiJeFXn3zvY0p41mdU5VUgbgs1rNsc/y5ngFUijdWd+iIN8eoyuZHKB8xN6BL4PdWmzqFmxNg6V2w==
 
-echarts@^5.6.0:
-  version "5.6.0"
-  resolved "https://registry.npmjs.org/echarts/-/echarts-5.6.0.tgz"
-  integrity sha512-oTbVTsXfKuEhxftHqL5xprgLoc0k7uScAwtryCgWF6hPYFLRwOUHiFmHGCBKP5NPFNkDVopOieyUqYGH8Fa3kA==
+echarts@^4.9.0:
+  version "4.9.0"
+  resolved "https://registry.npmjs.org/echarts/-/echarts-4.9.0.tgz"
+  integrity sha512-+ugizgtJ+KmsJyyDPxaw2Br5FqzuBnyOWwcxPKO6y0gc5caYcfnEUIlNStx02necw8jmKmTafmpHhGo4XDtEIA==
   dependencies:
-    tslib "2.3.0"
-    zrender "5.6.1"
+    zrender "4.3.2"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -3693,6 +3692,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmmirror.com/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@~2.3.2:
+  version "2.3.2"
+  resolved "https://registry.npmmirror.com/fsevents/-/fsevents-2.3.2.tgz"
+  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 function-bind@^1.1.1, function-bind@^1.1.2:
   version "1.1.2"
@@ -6094,7 +6098,7 @@ tr46@~0.0.3:
   resolved "https://registry.npmmirror.com/tr46/-/tr46-0.0.3.tgz"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
-tslib@^2.0.3, tslib@2.3.0:
+tslib@^2.0.3:
   version "2.3.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz"
   integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
@@ -6606,9 +6610,7 @@ yargs@^16.0.0:
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
 
-zrender@5.6.1:
-  version "5.6.1"
-  resolved "https://registry.npmjs.org/zrender/-/zrender-5.6.1.tgz"
-  integrity sha512-OFXkDJKcrlx5su2XbzJvj/34Q3m6PvyCZkVPHGYpcCJ52ek4U/ymZyfuV1nKE23AyBJ51E/6Yr0mhZ7xGTO4ag==
-  dependencies:
-    tslib "2.3.0"
+zrender@4.3.2:
+  version "4.3.2"
+  resolved "https://registry.npmjs.org/zrender/-/zrender-4.3.2.tgz"
+  integrity sha512-bIusJLS8c4DkIcdiK+s13HiQ/zjQQVgpNohtd8d94Y2DnJqgM1yjh/jpDb8DoL6hd7r8Awagw8e3qK/oLaWr3g==

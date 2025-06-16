@@ -246,7 +246,9 @@
         try {
           const meta = chainDefaultTokenMap[this.assets.chainId]
           if (!meta) throw new Error('无效链ID')
-          const priceData = await fetchTokenPrice(meta.coinGeckoPlatformId, this.assets.contractAddress, meta.coinGeckoPlatformId)
+          
+          const priceData = await fetchTokenPrice(this.assets.isMainCoin?meta.coinGeckoPlatformId:meta.coinGeckoCoinId, 
+          this.assets.contractAddress, this.assets.isMainCoin?meta.coinGeckoPlatformId:meta.coinGeckoCoinId)
           this.price = priceData?.price || 0
         } catch (e) {
           console.error('获取代币价格失败', e)

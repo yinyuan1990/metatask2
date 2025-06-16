@@ -1,19 +1,23 @@
 <script>
 import * as echarts from "echarts";
 import {load} from "@/bbjs/AccountManager"
-import { fetchTokenDetailWithFallback,fetchTokenDetail,fetchTokenBalance } from "@/bbjs/priceService"
-import {chainDefaultAssetMap,chainArr} from "@/bbjs/chain-default-assets"
+import { fetchTokenDetailWithFallback,fetchTokenDetail,fetchTokenBalance,fetchMainCoinHistory,fetchTokenHistory } from "@/bbjs/priceService"
+import {chainDefaultAssetMap,chainArr,chainDefaultTokenMap} from "@/bbjs/chain-default-assets"
 import { formatLargeNumber,formatPrice,formatBalance } from "@/bbjs/utils"
 import { formatDate } from "@/static/js/common"
 import receivePayment from "@/components/index/receivePayment.vue";
+import ChainIcon2 from '@/components/common/ChainIcon2.vue'
+import { networkManager} from '@/bbjs/networkManager.js'
 export default {
   components:{
+    ChainIcon2,
     receivePaymentVue:receivePayment
   },
   data() {
     return {
         timeKey:0,
-        timeList:['1D','1W','1M','3M','1Y','所有'],
+        timeDaysMap: [1, 7, 30, 90, 365],
+        timeList:['1天','1周','1个月','3个月','1年'],
         setList: [
             { name: '买入', img: require('@/static/icon/addicon.png'), id: 1 },
             { name: '兑换', img: require('@/static/icon/swap-horizontal.svg'), id: 2 },
@@ -37,6 +41,10 @@ export default {
     this.newTime = formatDate( new Date().getTime(),'MM月DD日 hh:ii' )
   },
   methods: {
+    getNameByChainId2(){
+
+      return networkManager.getByChainId(this.dbitem.chainId).name
+    },
     formatLargeNumber,
     formatPrice,
     formatBalance,
@@ -79,9 +87,12 @@ export default {
                 path:'/swap'
             })
         }else if( id == 3){
+
+          /*
           this.$router.push({
             path:'/klqbox'
-          })
+          })*/
+          window.location.href = 'https://portfolio.metamask.io/explore?MetaMaskEntry=mobile%2F&metricsEnabled=true&marketingEnabled=true';
         }else if( id == 4){
             
 
@@ -118,6 +129,13 @@ export default {
       console.log('wlAndDbinfo',wlAndDbinfo,this.dbitem)
       let ajaxfn;
       let paramsObj;
+
+
+      /*
+          coinGeckoCoinId: 'binancecoin',
+    coinGeckoPlatformId: 'binance-smart-chain',
+      */
+
       if( this.dbitem.isMainCoin ){
         ajaxfn = fetchTokenDetail
         paramsObj = {
@@ -125,10 +143,10 @@ export default {
           contractAddress:this.dbitem.contractAddress
         }
       }else{
-        ajaxfn = fetchTokenDetailWithFallback
+        ajaxfn = fetchTokenDetail
         paramsObj = {
           rpcUrl:wlAndDbinfo.rpcUrls[0],
-          platformId:wlAndDbinfo.coinGeckoPlatformId,
+          platformId:wlAndDbinfo.coinGeckoCoinId,
           contractAddress:this.dbitem.contractAddress
         }
       }
@@ -173,83 +191,111 @@ export default {
       })
     },
     init() {
-      var chartDom = document.getElementById("main");
-      var myChart = echarts.init(chartDom);
-      var option;
-
-      option = {
-        xAxis: {
-          type: "category",
-          show: false,
-          axisLine: { show: false }, // 隐藏轴线
-          axisTick: { show: false }, // 隐藏刻度线
-          axisLabel: { show: false }, // 隐藏标签
-          splitLine: { show: false }, // 隐藏网格线
-          data: ["10", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        },
-        tooltip: {
-          trigger: "axis",
-          showContent: false,
-          axisPointer: {
-            show: false,
-          },
-        },
-        yAxis: {
-          type: "value",
-          show: false,
-          axisLine: { show: false }, // 隐藏轴线
-          axisTick: { show: false }, // 隐藏刻度线
-          axisLabel: { show: false }, // 隐藏标签
-          splitLine: { show: false }, // 隐藏网格线
-        },
-        grid: {
-          width: "auto",
-          height: "auto",
-          left: "0px", // 左侧边距
-          right: "0px", // 右侧边距
-          top: "15px", // 顶部边距
-          bottom: "0px", // 底部边距
-          containLabel: true, // 包含坐标轴标签区域
-        },
-        series: [
-          {
-            markPoint: {
-              // symbol:'rect',
-              label: {
-                backgroundColor: "transparent",
-                distance: 120,
-                color: "#686e7d",
-              },
-              itemStyle: {
-                color: "transparent",
-              },
-              data: [{ type: "max", name: "Max" }],
-            },
-            data: [150, 230, 224, 218, 135, 147, 260],
-            showSymbol: false,
-            areaStyle: {
-                opacity:0.4  
-            },
-            // stack: 'Total',
-            // smooth: true,
-            type: "line",
-          },
-        ],
-      };
-
-      option && myChart.setOption(option);
-      myChart.getZr().on('click', function(params) {
-            const point = [params.offsetX, params.offsetY];
-            const [xIndex] = myChart.convertFromPixel({seriesIndex:0}, point);
-            if(xIndex >= 0) {
-                const option = myChart.getOption();
-                console.log('选中数据:', option.series[0].data[xIndex]);
-            }
+      this.swapPrice(1)
+      this.getDbInfo();  
+    },
+    async onTimeSelect(index) {
+      this.timeKey = index
+      const days = this.timeDaysMap[index]
+      await this.swapPrice(days)
+    },
+    onTokenIconError(e) {
+        e.target.src = require("@/static/icon/moren.png");
+      }
+    ,
+    async swapPrice(days){
+      
+      const meta = chainDefaultTokenMap[this.dbitem.chainId];
+        // 使用 $nextTick 确保 DOM 已更新
+      await this.$nextTick();
+      const chartDom = document.getElementById("main")
+      if (!chartDom) return
+      chartDom.style.width = "100%"; 
+      const myChart = echarts.init(chartDom,null, {
+        devicePixelRatio: 1  // 强制 1:1 绘制，图会模糊
+      })
+      myChart.resize();
+      // 添加窗口大小变化监听
+      const resizeHandler = () => myChart.resize();
+      window.addEventListener('resize', resizeHandler);
+       // 在组件销毁时移除监听器
+      this.$once('hook:beforeDestroy', () => {
+        window.removeEventListener('resize', resizeHandler);
+        myChart.dispose();
       });
 
-      this.getDbInfo();
-      
-    },
+
+      let prices = []
+      try {
+        if (this.dbitem.isMainCoin) {
+          prices = await fetchMainCoinHistory(meta.coinGeckoPlatformId, days)
+        } else {
+          prices = await fetchTokenHistory(meta.coinGeckoCoinId, this.dbitem.contractAddress, days)
+        }
+      } catch (e) {
+        console.error("获取价格失败:", e)
+        return
+      }
+
+      if (prices.length > 200) {
+        prices = prices.slice(-200) // 保留最后 50 条数据（通常是最新的）
+      }
+      console.log(JSON.stringify(prices))
+      const xAxisData = prices.map(([timestamp]) => {
+        const date = new Date(timestamp)
+        return days > 1
+          ? `${date.getMonth() + 1}/${date.getDate()}`
+          : `${date.getHours()}:${date.getMinutes().toString().padStart(2, "0")}`
+      })
+      const yAxisData = prices.map(([_, price]) => Number(price.toFixed(4)))
+      const option = {
+          xAxis: {
+            type: "category",
+            show: false,
+            data: xAxisData,
+          },
+          yAxis: {
+            type: "value",
+            show: false,
+            min: value => value.min ,
+            max: value => value.max ,
+          },
+          tooltip: {
+            trigger: "axis",
+            axisPointer: { type: "line" },
+          },
+          grid: {
+          left: "10", // 左侧边距
+          right: "0", // 右侧边距
+          top: "0px", // 顶部边距
+          bottom: "0px", // 底部边距
+          containLabel: false, // 包含坐标轴标签区域
+          },
+          series: [
+            {
+              type: "line",
+              data: yAxisData,
+              showSymbol: false,
+              smooth: true,
+              lineStyle: {
+                width: 2,
+                color: "#3E6CFF",
+              },
+              areaStyle: {
+                opacity: 0.8,
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "#3E6CFF" },
+                  { offset: 1, color: "rgba(62,108,255,0)" },
+                ]),
+              },
+            },
+          ],
+      }
+      console.log("join=====>22222")
+      myChart.setOption(option);
+      myChart.resize(); // 再次确保 resize
+     
+    }
   },
 };
 </script>
@@ -261,7 +307,12 @@ export default {
         class="mm-box mm-icon ts backSvg mm-icon--size-sm mm-box--display-inline-block mm-box--color-inherit"
         @click="backFn"
       ></span>
-      <div class="dbdetails_head_tt mm-text--body-md">{{details.name}}</div>
+      
+      <div class="bdbdetails_head_tt">
+        
+        <div class="btitle-main" >{{ this.dbitem.name }}</div>
+        <div class="btitle-sub" > {{ getNameByChainId2() }}</div>
+      </div>
       <span
         class="mm-box mm-icon ts more-vertical mm-icon--size-sm mm-box--display-inline-block mm-box--color-inherit"
       ></span>
@@ -320,11 +371,16 @@ export default {
         </p>
       </div>
     </div>
-    <div class="eharbox" id="main" v-show="false"></div>
-     <div class="timelist p16 " v-shwo="false"> 
+    <div class="chart-container">
+      <div id="main" ref="chartDom"></div>
+    </div>
+    
+     <div class="timelist p16 "> 
         <div class="timelist_it mm-text--body-sm-medium mm-box--color-text-alternative" 
         v-for="(it,i) in timeList" :key="i"
-        :class="{'time-range-button__selected':timeKey==i}">
+        :class="{'time-range-button__selected':timeKey==i}"
+        @click="onTimeSelect(i)"
+        >
             {{ it }}
         </div>
     </div> 
@@ -368,8 +424,14 @@ export default {
                         mm-box--justify-content-center mm-box--align-items-center 
                         mm-box--color-text-default mm-box--background-color-background-muted 
                         mm-box--rounded-full">
-                            <img class="mm-avatar-token__token-image" 
-                            :src="details.logo" alt="ETH logo">
+                            
+
+                            <img
+                              :src="this.dbitem.iconUrl"
+                              alt="token icon"
+                              class="token-icon"
+                              @error="onTokenIconError($event)"
+                            />
                         </div>
                         <div class="mm-box mm-badge-wrapper__badge-container rsmallicon
                         mm-badge-wrapper__badge-container--rectangular-bottom-right">
@@ -381,8 +443,13 @@ export default {
                             mm-box--background-color-background-muted mm-box--rounded-md 
                             mm-box--border-color-background-default mm-box--border-width-2 
                             box--border-style-solid">
-                                <img class="mm-avatar-network__network-image" 
-                                :src="details.logo" alt="Ethereum Mainnet logo">
+                              
+                            <ChainIcon2
+                                :chainId="this.dbitem.chainId"
+                                :isTestnet="false"
+                                class="chain-icon"
+                              />
+
                                 </div>
                             </div>
                         </div>
@@ -453,18 +520,9 @@ export default {
             mm-text--body-md mm-box--display-flex 
             mm-box--gap-1 mm-box--align-items-center 
             mm-box--color-text-default" data-testid="asset-network">
-                <div class="mm-box mm-text mm-avatar-base 
-                mm-avatar-base--size-sm mm-avatar-network 
-                mm-text--body-sm mm-text--text-transform-uppercase 
-                mm-box--display-flex mm-box--justify-content-center 
-                mm-box--align-items-center mm-box--color-text-default
-                mm-box--background-color-background-alternative 
-                mm-box--rounded-md mm-box--border-color-background-default 
-                mm-box--border-width-1 box--border-style-solid">
-                    <img class="mm-avatar-network__network-image" 
-                    :src="details.logo" alt="Ethereum Mainnet logo"/>
+                <div>
                 </div>
-                {{ details.name }}
+                {{ getNameByChainId2() }}
             </div>
         </div>
         <div class="mm-box mm-box--display-flex mt12px
@@ -543,15 +601,50 @@ export default {
   width: 100vw;
   height: 100vh;
   &_head {
+
+    /*
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 16px 0;
-    color: #686e7d;
+    color: #686e7d;*/
+
+    position: sticky;
+    top: 0;
+    z-index: 10; // 保证在内容上方
+    background: white; // 避免滚动时内容透过
+    padding: 16px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+
     &_tt {
       flex: 1;
       margin: 0 10px;
+      
+
+
+      .title-sub {
+        font-size: 12px;
+        color: #999;
+        line-height: 16px;
+        
+      }
+
+      .title-main {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        
+        color: #333;
+      }
+      
+
     }
+
+    
   }
   .p16 {
     padding: 0 16px;
@@ -587,8 +680,17 @@ export default {
   mask-image: url("@/static/icon/stake.svg");
 }
 .eharbox {
-  width: 100%;
-  height: 152px;
+  width: 100vh;
+  height: 40vh;
+}
+.chart-container {
+  width:  100%;       /* 父容器宽度（可调整） */
+  height: 40vh;     /* 父容器高度 */
+  margin: 0 auto;   /* 水平居中（可选） */
+}
+#main {
+  width: 100%;      /* 继承父容器宽度 */
+  height: 100%;     /* 继承父容器高度 */
 }
 .mt12px{
     margin: 12px 0;
@@ -600,4 +702,47 @@ export default {
 .lsjbls.newbg{
     background: url('@/static/img/ramps-card-activity-illustration.png') right bottom / contain no-repeat, linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.12)), linear-gradient(90deg, rgb(87, 197, 220) 0%, rgb(6, 191, 221) 49.39%, rgb(53, 169, 199) 100%);
 }
+.token-icon {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+  }
+  .chain-icon {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+  }
+  .chain-icon1 {
+    
+    width: 15px;
+    height: 15px;
+  }
+
+  .bdbdetails_head_tt {
+  display: flex;                // 使用 Flex 布局
+  flex-direction: column;       // 子元素竖直排列（默认是水平排列）
+  align-items: center;          // 子元素在水平方向上居中（即左右居中）
+  justify-content: center;      // 子元素在垂直方向上居中（即上下居中）
+  position: absolute;           // 使该元素相对定位，配合下面的居中
+  left: 50%;                    // 左边到容器中心
+  transform: translateX(-50%);  // 水平居中（向左平移自身一半宽度）
+  top: 50%;                     // 如果你希望它上下也居中，可加这个
+  transform: translate(-50%, -50%); // 同时水平 & 垂直居中
+  text-align: center;           // 文字居中对齐
+}
+
+.btitle-sub {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
+  line-height: 16px;
+}
+
+.btitle-main {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #333;
+}
+
 </style>

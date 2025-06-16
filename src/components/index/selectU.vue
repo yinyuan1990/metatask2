@@ -2,7 +2,6 @@
 import { accountManager } from '@/bbjs/AccountManager';
 import { assetManager } from '@/bbjs/AssetManager';
 import {formatAddress} from "@/bbjs/utils"
-import {chainDefaultTokenMap} from "@/bbjs/chain-default-assets"
 import { Toast } from 'vant';
 export default {
   props:{

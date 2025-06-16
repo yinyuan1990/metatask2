@@ -273,7 +273,9 @@
       if (!meta) {
         continue;
       }
-      const priceData = await fetchTokenPrice2(meta.coinGeckoPlatformId, it.chainId, it.contractAddress, meta.coinGeckoPlatformId);
+
+
+      const priceData = await fetchTokenPrice2(it.isMainCoin?meta.coinGeckoPlatformId:meta.coinGeckoCoinId, it.chainId, it.contractAddress, it.isMainCoin?meta.coinGeckoPlatformId:meta.coinGeckoCoinId);
 
       console.log("fetchTokenPrice2 请求chainId:", it.chainId, "当前chainId:", accountManager.getCurrentChainId());
       if (priceData.chainid !== accountManager.getCurrentChainId()) {
