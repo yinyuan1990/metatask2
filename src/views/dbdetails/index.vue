@@ -13,18 +13,24 @@ export default {
     ChainIcon2,
     receivePaymentVue:receivePayment
   },
+  computed: {
+  timeList() {
+    return this.$t('timeList')
+  },
+  setList() {
+    return [
+      { name: this.$t('action.buy'),    img: require('@/static/icon/addicon.png'),              id: 1 },
+      { name: this.$t('action.swap'),   img: require('@/static/icon/swap-horizontal.svg'),      id: 2 },
+      { name: this.$t('action.bridge'), img: require('@/static/icon/bridge.svg'),               id: 3 },
+      { name: this.$t('action.send'),   img: require('@/static/icon/arrow-2-up-right.svg'),     id: 4 },
+      { name: this.$t('action.receive'),img: require('@/static/icon/scan-barcode.svg'),         id: 5 }
+    ]
+  }
+  },
   data() {
     return {
         timeKey:0,
         timeDaysMap: [1, 7, 30, 90, 365],
-        timeList:['1天','1周','1个月','3个月','1年'],
-        setList: [
-            { name: '买入', img: require('@/static/icon/addicon.png'), id: 1 },
-            { name: '兑换', img: require('@/static/icon/swap-horizontal.svg'), id: 2 },
-            { name: '跨链桥', img: require('@/static/icon/bridge.svg'), id: 3 },
-            { name: '发送', img: require('@/static/icon/arrow-2-up-right.svg'), id: 4 },
-            { name: '收款', img: require('@/static/icon/scan-barcode.svg'), id: 5 },
-        ],
         closeSvg: require('@/static/icon/close.svg'),
         dbitem:{},// 代币参数
         details:{}, // 详情参数
@@ -404,9 +410,14 @@ export default {
         </button>
     </div>
     <div class="p16">
+     
         <h3 class="mm-box mm-text mm-text--heading-md 
-        mm-box--padding-bottom-2 
-        mm-box--padding-left-4 mm-box--color-text-default">您的余额</h3>
+            mm-box--padding-bottom-2 
+            mm-box--padding-left-4 mm-box--color-text-default">
+          {{ $t('asset.balanceTitle') }}
+        </h3>
+
+
         <div class="mm-box mm-box--display-flex mm-box--gap-4 
         mm-box--flex-direction-row mm-box--width-full mm-box--height-full">
             <a class="mm-box mm-box--padding-top-2 
@@ -471,7 +482,7 @@ export default {
                                         <span class="mm-box mm-text mm-text--body-md 
                                         mm-text--font-weight-medium mm-box--padding-inline-start-1 
                                         mm-box--padding-inline-end-1 
-                                        mm-box--color-primary-default">质押</span>
+                                        mm-box--color-primary-default">{{ $t('asset.stake') }}</span>
                                         <span class="mm-box mm-icon ts stakeSvg
                                         mm-icon--size-sm 
                                         mm-box--display-inline-block 
@@ -510,12 +521,12 @@ export default {
             </div>
         <h3 class="mm-box mm-text mm-text--heading-md 
         mm-box--padding-bottom-2 
-        mm-box--padding-left-4 mm-box--color-text-default">代币详情</h3>
+        mm-box--padding-left-4 mm-box--color-text-default">{{ $t('asset.tokenDetails') }}</h3>
         <div class="mm-box mm-box--display-flex mt12px
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">网络： </p>
+            mm-box--color-text-alternative">{{ $t('asset.network') }}</p>
             <div class="mm-box mm-text 
             mm-text--body-md mm-box--display-flex 
             mm-box--gap-1 mm-box--align-items-center 
@@ -528,7 +539,7 @@ export default {
         <div class="mm-box mm-box--display-flex mt12px
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text mm-text--body-md-medium 
-            mm-box--color-text-alternative">支出上限</p>
+            mm-box--color-text-alternative">{{ $t('asset.spendingCap') }}</p>
             <a class="mm-box mm-text mm-button-base 
             asset-page__spending-caps mm-text--body-md-medium mm-button-link 
             mm-button-link--size-auto mm-text--body-md-medium 
@@ -537,16 +548,16 @@ export default {
             mm-box--justify-content-center mm-box--align-items-center 
             mm-box--color-primary-default mm-box--background-color-transparent" 
             href="https://portfolio.metamask.io/?metamaskEntry=asset_page&amp;metametricsId=0x90f3346b1d4226d7a4a6f6188cfd7b89cc71620bdeb47c62abae8570b8d94126&amp;metricsEnabled=true&amp;marketingEnabled=true&amp;accountAddress=0x9b5e3e15d28b856ee1077370bbbb303b2d95ee52&amp;tab=spending-caps" 
-            target="_blank" rel="noopener noreferrer">在 Portfolio 上编辑</a>
+            target="_blank" rel="noopener noreferrer">{{ $t('asset.editInPortfolio') }}</a>
         </div>
         <h3 class="mm-box mm-text mm-text--heading-md 
         mm-box--padding-bottom-2 
-        mm-box--padding-left-4 mm-box--color-text-default">市场详情</h3>
+        mm-box--padding-left-4 mm-box--color-text-default">{{ $t('asset.marketDetail') }}</h3>
         <div class="mm-box mm-box--display-flex mt12px
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">市值</p>
+            mm-box--color-text-alternative">{{ $t('asset.marketCap') }}</p>
             <p class="mm-box mm-text mm-text--body-md 
             mm-box--color-text-default" 
             data-testid="asset-market-cap">{{ formatLargeNumber(details.marketCap) }}</p>
@@ -555,7 +566,7 @@ export default {
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">总交易额</p>
+            mm-box--color-text-alternative">{{ $t('asset.totalVolume') }}</p>
             <p class="mm-box mm-text mm-text--body-md 
             mm-box--color-text-default" 
             data-testid="asset-market-cap">{{ formatLargeNumber(details.volume) }}</p>
@@ -564,7 +575,7 @@ export default {
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">循环供应</p>
+            mm-box--color-text-alternative">{{ $t('asset.circulatingSupply') }}</p>
             <p class="mm-box mm-text mm-text--body-md 
             mm-box--color-text-default" 
             data-testid="asset-market-cap">{{ formatLargeNumber(details.marketCap) }}</p>
@@ -573,7 +584,7 @@ export default {
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">有史以来新高</p>
+            mm-box--color-text-alternative">{{ $t('asset.allTimeHigh') }}</p>
             <p class="mm-box mm-text mm-text--body-md 
             mm-box--color-text-default" 
             data-testid="asset-market-cap">{{ formatPrice(details.ath) }}</p>
@@ -582,14 +593,14 @@ export default {
         mm-box--justify-content-space-between">
             <p class="mm-box mm-text 
             mm-text--body-md-medium 
-            mm-box--color-text-alternative">有史以来新低</p>
+            mm-box--color-text-alternative">{{ $t('asset.allTimeLow') }}</p>
             <p class="mm-box mm-text mm-text--body-md 
             mm-box--color-text-default" 
             data-testid="asset-market-cap">{{ formatPrice(details.atl) }}</p>
         </div>
         <h3 class="mm-box mm-text mm-text--heading-md 
         mm-box--padding-bottom-2 
-        mm-box--padding-left-4 mm-box--color-text-default">您的活动</h3>
+        mm-box--padding-left-4 mm-box--color-text-default">{{ $t('asset.yourActivity') }}</h3>
 
         
     </div>
