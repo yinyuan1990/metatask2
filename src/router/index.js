@@ -12,7 +12,16 @@ Vue.use(VueRouter)
 
 const routes = [
 
-  
+  {
+    path: '/buy',
+    name: 'buy',
+    component: () => import('@/views/buy/index.vue')
+  },
+  {
+    path: '/sell',
+    name: 'sell',
+    component: () => import('@/views/sell/index.vue')
+  },
   {
     path: '/evmaddcoin',
     name: 'evmaddcoin',

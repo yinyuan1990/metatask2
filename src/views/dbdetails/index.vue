@@ -87,7 +87,8 @@ export default {
         console.log("join--->  "+id)
         let urls;
         if(id == 1){
-            urls = 'https://portfolio.metamask.io/buy?metamaskEntry=ext_buy_sell_button&chainId=1&metametricsId=0x90f3346b1d4226d7a4a6f6188cfd7b89cc71620bdeb47c62abae8570b8d94126&metricsEnabled=true&marketingEnabled=true'
+          this.$router.push({ path: '/buy' });
+            //urls = 'https://portfolio.metamask.io/buy?metamaskEntry=ext_buy_sell_button&chainId=1&metametricsId=0x90f3346b1d4226d7a4a6f6188cfd7b89cc71620bdeb47c62abae8570b8d94126&metricsEnabled=true&marketingEnabled=true'
         }else if( id == 2){
             this.$router.push({
                 path:'/swap'

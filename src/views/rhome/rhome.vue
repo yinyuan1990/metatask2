@@ -84,7 +84,7 @@
 		</div>
 		<div class="scroll-container">
 			<CoinAsset v-show="currentIndex === 0" @importTokens="handleImportTokens" />
-			<!-- <NftComponent v-show="currentIndex === 1" /> -->
+			 <nft v-show="currentIndex === 1" /> 
 		</div>
 		<ChainChangeDialog v-if="showNetworkModal" @close="showNetworkModal = false" @select-network="handleSelectNetwork" @add-zdynetwork="handleAddZdyNetwork" />
 		<AddNetworkZdyPopup v-if="showAddPopup" @close="closePopup" />
@@ -113,7 +113,7 @@ import { assetManager } from '@/bbjs/AssetManager.js'; // 确保引入了 assetM
 import SendDialog from '@/components/common/SendDialog.vue';
 import AddNetworkZdyPopup from '@/components/common/AddNetworkZdyPopup.vue';
 import AcountChangeDialog from '@/components/common/AcountChangeDialog.vue';
-
+import nft from '@/components/nft/index.vue';
 export default {
 	beforeDestroy() {
 		EventBus.$off('send-acount', this.sendAcount);
@@ -174,6 +174,7 @@ export default {
 		AddNetworkZdyPopup,
 		AcountChangeDialog,
 		SendDialog,
+		nft,
 	},
 	data() {
 		return {

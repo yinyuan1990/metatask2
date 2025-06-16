@@ -114,10 +114,12 @@ export default {
 			if (item.title === this.$t('setting.buy')) {
 				// 买入操作
 				console.log('点击买入');
+				this.$router.push({ path: '/buy' });
 				// 跳转或业务逻辑
 			} else if (item.title === this.$t('setting.sell')) {
 				// 卖出操作
 				console.log('点击卖出');
+				this.$router.push({ path: '/sell' });
 			} else if (item.title === this.$t('setting.exchange')) {
 				// 兑换操作
 				console.log('点击兑换');

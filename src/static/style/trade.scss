@@ -1,0 +1,49 @@
+@import "base";
+
+.trade-page {
+  .sel-btn {
+    padding: 20px 0;
+  }
+
+  .icon-arrow {
+    width: 22px;
+    padding-left: 10px;
+  }
+
+  .btn-bg {
+    padding: 8px 10px;
+    border-radius: 50px;
+    background: #F3F5F9;
+  }
+
+  .btn-right {
+    margin-left: 15px;
+  }
+
+  .btn-border {
+    margin: 10px 0;
+    padding: 0 10px;
+    min-height: 50px;
+    border: 1px solid #E2E4E7;
+    border-radius: 5px;
+    
+    .img {
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+    }
+  }
+   
+  .price-inp {
+    border: 0;
+  }
+
+  .pay-way {
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .pay-card {
+    height: 26px;
+    margin-right: 5px;
+  }
+}
