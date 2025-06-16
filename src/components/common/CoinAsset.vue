@@ -111,16 +111,12 @@
     EventBus.$off('network-changed', this.onNetworkChanged)
     EventBus.$off('acc-changed', this.onAccountChanged)
     EventBus.$off('as-changed', this.onAccountChanged1)
-    EventBus.$off('selectedNetworkTypeChanged', (type) => {
-     this.selectedType = type
-    }
-  )
+    EventBus.$off('selectedNetworkTypeChanged',this.cctypeChnage)
+  
 },
     created() {
     // 监听全局事件，确保跨组件同步
-    EventBus.$on('selectedNetworkTypeChanged', (type) => {
-      this.selectedType = type
-    })
+    EventBus.$on('selectedNetworkTypeChanged',this.cctypeChnage)
     EventBus.$on('network-changed',this.onNetworkChanged)
     EventBus.$on('acc-changed',this.onAccountChanged)
     EventBus.$on('as-changed',this.onAccountChanged1)
@@ -162,6 +158,11 @@
       this.initBetterScroll();
     },
     methods: {
+
+      cctypeChnage(mtype){
+
+        this.selectedType = mtype
+      },
 
       handleStakeClick(asset) {
       console.log('点击质押', asset);

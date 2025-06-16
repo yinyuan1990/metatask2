@@ -99,13 +99,19 @@ export default {
       click: true
     })
   },
+  beforeDestroy(){
+    eventBus.$off('selectedNetworkTypeChanged',this.typeChange)
+  },
   created() {
-    eventBus.$on('selectedNetworkTypeChanged', (type) => {
-      this.selectedType = type
-      this.refreshnetKey++
-    })
+    eventBus.$on('selectedNetworkTypeChanged',this.typeChange)
   },
   methods: {
+
+    typeChange(type){
+      this.selectedType = type
+      this.refreshnetKey++
+    }
+    ,
     loadNetworks() {
       this.popularNetworks = networkManager.getAll().filter(net => net.isJoined && !net.isTestnet)
       const currentAccount = accountManager.getCurrentAccount()

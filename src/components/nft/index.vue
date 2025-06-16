@@ -1,21 +1,21 @@
 <script>
   import { networkManager } from '@/bbjs/networkManager.js'
   import { accountManager,save } from "@/bbjs/AccountManager";
-
+  import { EventBus } from '@/bbjs/bus.js';
 export default {
       beforeDestroy() {
       
-        EventBus.$off('selectedNetworkTypeChanged', (type) => {
-        this.selectedType = type
-        }
-      )
+        EventBus.$off('selectedNetworkTypeChanged',this.typeChange)
     },
     created() {
     // 监听全局事件，确保跨组件同步
-    EventBus.$on('selectedNetworkTypeChanged', (type) => {
-      this.selectedType = type
-    })
+    EventBus.$on('selectedNetworkTypeChanged', this.typeChange)
   
+  },
+  methods:{
+     typeChange(type){
+      this.selectedType = type
+     }
   },
   computed: {
     chooseText() {
@@ -48,31 +48,25 @@ export default {
 </script>
 
 <template>
-
-
- <div>
-
-
-  <div class="container">
+  <div>
+    <div class="container">
       <div class="l1">
         <div class="choose">
-            {{ chooseText }}
-            <van-icon name="arrow-down" />
+          {{ $t('nft.chooseText') }}
+          <van-icon name="arrow-down" />
         </div>
       </div>     
     </div>
 
     <div class="no-nft f-12 text-center">
-    <img class="img mb-5" alt="" src="@/static/img/nft.jpg" />
-    <p class="f-18 c-6 mb-5">尚无 NFT</p>
-    <p class="mb-10">了解更多</p>
-    <p class="c-9">您没有任何收藏品！</p>
+      <img class="img mb-5" alt="" src="@/static/img/nft.jpg" />
+      <p class="f-18 c-6 mb-5">{{ $t('nft.emptyTitle') }}</p>
+      <p class="mb-10">{{ $t('nft.learnMore') }}</p>
+      <p class="c-9">{{ $t('nft.emptyHint') }}</p>
+    </div>
   </div>
-
- </div>
-
-
 </template>
+
 
 <style scoped lang="scss">
 @import "~@/static/style/base.css";

@@ -6,6 +6,38 @@ Vue.use(VueI18n)
 const messages = {
   zh: {
 
+    nft: {
+      chooseText: '请选择',
+      emptyTitle: '尚无 NFT',
+      learnMore: '了解更多',
+      emptyHint: '您没有任何收藏品！'
+    },
+    trade: {
+      buyAmount: '要买入的金额',
+      account: '账户',
+      youWantToBuy: '您想购买',
+      currentBalance: '当前余额',
+      amount: '金额',
+      updatePaymentMethod: '更新付款方式',
+      debitOrCredit: '借记卡或信用卡',
+      getQuote: '获取报价',
+      sellAmount: '要卖出的金额',
+    account: '账户',
+    youWantToSell: '您想卖出',
+    currentBalance: '当前余额',
+    amount: '金额',
+    sendToCashAccount: '将您的现金发送到',
+    debitOrCredit: '借记卡或信用卡',
+    getQuote: '获取报价'
+    },
+  common3: {
+    cancel: '取消',
+    change: '更改'
+  },
+    common2: {
+      cancel: '取消',
+      change: '更改'
+    },
     asset: {
       detailTitle: '资产详情',
       balanceTitle: '您的余额',
@@ -437,6 +469,41 @@ mainnet: "主网",
   },
   en: {
 
+    nft: {
+      chooseText: 'Please choose',
+      emptyTitle: 'No NFTs Yet',
+      learnMore: 'Learn More',
+      emptyHint: 'You don’t have any collectibles!'
+    },
+    trade: {
+      buyAmount: 'Amount to Buy',
+      account: 'Account',
+      youWantToBuy: 'You want to buy',
+      currentBalance: 'Current Balance',
+      amount: 'Amount',
+      updatePaymentMethod: 'Update Payment Method',
+      debitOrCredit: 'Debit or Credit',
+      getQuote: 'Get Quote',
+      sellAmount: 'Amount to Sell',
+    account: 'Account',
+    youWantToSell: 'You want to sell',
+    currentBalance: 'Current Balance',
+    amount: 'Amount',
+    sendToCashAccount: 'Send your cash to',
+    debitOrCredit: 'Debit or Credit',
+    getQuote: 'Get Quote'
+    },
+    
+  common3: {
+    cancel: 'Cancel',
+    change: 'Change'
+  }
+    
+    ,
+    common2: {
+      cancel: 'Cancel',
+      change: 'Change'
+    },
     asset: {
       detailTitle: 'Asset Detail',
       balanceTitle: 'Your Balance',
